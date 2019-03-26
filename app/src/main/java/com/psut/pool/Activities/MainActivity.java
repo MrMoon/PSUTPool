@@ -41,8 +41,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Default Fragment:
         getSupportFragmentManager().beginTransaction().replace(R.id.linLayoutHomeMain, fragmentMainTab).commit();
 
-        //All Fragments:
+        //Other Fragments:
         imgOffer.setOnClickListener(this);
+        imgNotification.setOnClickListener(this);
+        imgAccount.setOnClickListener(this);
     }
 
     @Override

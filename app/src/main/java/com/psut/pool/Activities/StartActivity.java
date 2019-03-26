@@ -70,6 +70,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         dialog.findViewById(R.id.btnYesLayoutPopUp).setOnClickListener(v -> {
             Intent intent = new Intent(StartActivity.this, VerifyPhoneActivity.class);
             intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
+            Toast.makeText(this, "Your Number is " + phoneNumber, Toast.LENGTH_SHORT).show();
             startActivity(intent);
         });
         dialog.show();

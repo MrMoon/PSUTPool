@@ -29,6 +29,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
     private Button btnConfirm;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
     private PhoneAuthProvider.ForceResendingToken resendingToken;
+    private PhoneAuthCredential authCredential;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
@@ -72,36 +73,29 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
         signInWithPhoneAuthCredential(authCredential);
     }
 
-    private void sendverificationcode() {
-        startPhoneNumberVerification(phoneNumber);
-        verificationCallbacks();
-    }
-
     private void verificationCallbacks() {
         callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-                if (phoneAuthCredential.getSmsCode() != null) {
-                    txtCode.setText(phoneAuthCredential.getSmsCode());
-                    signInWithPhoneAuthCredential(phoneAuthCredential);
-                }
+                String code = phoneAuthCredential.getSmsCode();
+                authCredential = phoneAuthCredential;
+                txtCode.setText(phoneAuthCredential.getSmsCode());
+                signInWithPhoneAuthCredential(authCredential);
             }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    txtCode.setError(Constants.VALID_PHONE_NUMBER);
-                } else if (e instanceof FirebaseTooManyRequestsException) {
+                if (e instanceof FirebaseTooManyRequestsException) {
                     Toast.makeText(VerifyPhoneActivity.this, Constants.LIMIT_EXCEEDED, Toast.LENGTH_LONG).show();
                 } else {
-                    e.printStackTrace();
+                    Toast.makeText(VerifyPhoneActivity.this, e.toString(), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
-                verificationID = verificationId;
+                verificationID = s;
                 resendingToken = forceResendingToken;
             }
         };
