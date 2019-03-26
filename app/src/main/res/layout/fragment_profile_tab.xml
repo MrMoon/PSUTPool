@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_backgroud">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/txtPersonalProfileFrag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/profile"
+            android:textColor="#113E56"
+            android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/imgProfileFrag"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@+id/txtPersonalProfileFrag"
+            android:gravity="center"
+            android:src="@drawable/ic_account_circle_black_24dp" />
+
+        <TextView
+            android:id="@+id/txtStartDrivingProfileFrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imgProfileFrag"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/start_driving"
+            android:textColor="#113E56"
+            android:textSize="23sp" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switchStartDrivingProfileFrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txtStartDrivingProfileFrag"
+            android:layout_alignBottom="@+id/txtStartDrivingProfileFrag"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:enabled="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/txtStartDrivingProfileFrag"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/txtPersonalInfoProfileFrag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/personal_information"
+                android:textColor="#113E56"
+                android:textSize="23sp" />
+
+            <TextView
+                android:id="@+id/txtMyRidesProfileFrag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/my_rides"
+                android:textColor="#113E56"
+                android:textSize="23sp" />
+
+            <TextView
+                android:id="@+id/txtWalletProfileFrag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/wallet"
+                android:textColor="#113E56"
+                android:textSize="23sp" />
+
+            <TextView
+                android:id="@+id/txtContactUsProfileFrag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/contact_us"
+                android:textColor="#113E56"
+                android:textSize="23sp" />
+
+            <TextView
+                android:id="@+id/txtLogOutProfileFrag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/log_out"
+                android:textColor="#113E56"
+                android:textSize="23sp" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linLayoutAboveMainFrag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#113e56"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            tools:ignore="UselessParent">
+
+            <Button
+                android:id="@+id/btnCaptainMainFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape_corners"
+                android:gravity="center"
+                android:text="@string/captain"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#fff" />
+
+            <Button
+                android:id="@+id/btnUniMapMainFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape_corners_white"
+                android:gravity="center"
+                android:text="@string/uni_map"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#113e56" />
+
+            <Button
+                android:id="@+id/btnPublicMapMainFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape_corners_white"
+                android:gravity="center"
+                android:text="@string/pub_map"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#113e56" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linLayoutHomeMainFrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/linLayoutAboveMainFrag"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+</RelativeLayout>
