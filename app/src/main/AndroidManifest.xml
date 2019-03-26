@@ -13,14 +13,14 @@
         <activity android:name=".Activities.VerifyPhoneActivity" />
         <activity android:name=".Activities.PersonalInfoActivity" />
         <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.RegisterActivity">
+        <activity android:name=".Activities.RegisterActivity" />
+        <activity android:name=".Activities.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.StartActivity" />
     </application>
 
 </manifest>
