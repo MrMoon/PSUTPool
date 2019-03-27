@@ -45,12 +45,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private EditText txtSearch;
     private View view;
     private GoogleMap map;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private Task<Location> locationTask;
     private Location currentLocation;
     private String[] permissions;
     private boolean isPermissionGranted;
 
+    @SuppressLint("InflateParams")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +59,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         return view;
     }
 
+    //Getting Permissions from the user:
     private void getLocationPermission() {
         permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -81,12 +81,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    //Assigning map to the fragment:
     private void intitMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragmentMap);
-        mapFragment.getMapAsync(this);
+        Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
+    //Setting up the after it's ready:
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -114,6 +116,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    //Setting up the search txt:
     @SuppressLint("ObsoleteSdkInt")
     private void init() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
@@ -129,6 +132,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    //Search Results:
     private void geoLocatione() {
         String search = txtSearch.getText().toString();
         Geocoder geocoder = new Geocoder(getActivity());
@@ -141,14 +145,15 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
         if (!(addresses.isEmpty())) {
             Address address = addresses.get(0);
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), 15f);
+            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), Constants.DEFAULT_ZOOM);
         }
     }
 
+    //Getting user current location:
     private void getLocation() {
         try {
             if (isPermissionGranted) {
-                fusedLocationProviderClient = new FusedLocationProviderClient(Objects.requireNonNull(getActivity()));
+                FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(Objects.requireNonNull(getActivity()));
                 if (!((LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE)))
                         .isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     Toast.makeText(getActivity(), Constants.TRUN_LOCATION_ON, Toast.LENGTH_SHORT).show();
@@ -162,7 +167,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     requestPermissions(permissions, Constants.LOCATION_PERMISSION_REQUEST_CODE);
                     return;
                 }
-                locationTask = fusedLocationProviderClient.getLastLocation();
+                Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
 
                 locationTask.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -181,6 +186,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    //Permission Results:
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         isPermissionGranted = false;
@@ -197,6 +203,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    //Setting up the view on the map
     private void moveCamera(LatLng lng, Float zoom) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(lng, zoom));
     }
