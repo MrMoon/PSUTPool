@@ -50,6 +50,7 @@
     <string name="is_this_your_number">Is This Your Number?</string>
     <string name="edit">Edit</string>
     <string name="yes">Yes</string>
+    <string name="APIKey">AIzaSyAA0BwgzGjIemr3fYJnGXw_SX8B3vsZvEQ</string>
     <string-array name="Spn">
         <item>@string/Anyone</item>
         <item>@string/female</item>

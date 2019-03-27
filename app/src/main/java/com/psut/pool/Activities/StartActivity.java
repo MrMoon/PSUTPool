@@ -24,6 +24,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     private Button btnConfirm;
     private EditText txtPhoneNumber;
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
     private String phoneNumber;
 
     @Override
@@ -37,11 +38,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         btnConfirm = findViewById(R.id.btnConfirmStart);
         txtPhoneNumber = findViewById(R.id.txtPhoneNumberStart);
 
+        //Buttons:
         btnConfirm.setOnClickListener(this);
 
-
         //Firebase:
-        firebaseAuth = FirebaseAuth.getInstance();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     //Passing the phone number to the VerifyPhone Activity
