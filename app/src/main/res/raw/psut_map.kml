@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Princess Sumaya University for Technology - PSUT - جامعة الأميرة سمية للتكنولوجيا</name>
+    <description/>
+    <Style id="icon-123-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/123-red-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-123-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/123-red-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-123">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-123-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-123-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-159-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/159-blue-pushpin.png</href>
+        </Icon>
+        <hotSpot x="10" xunits="pixels" y="31" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-159-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/159-blue-pushpin.png</href>
+        </Icon>
+        <hotSpot x="10" xunits="pixels" y="31" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-159">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-159-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-159-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-159-nodesc-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/159-blue-pushpin.png</href>
+        </Icon>
+        <hotSpot x="10" xunits="pixels" y="31" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-159-nodesc-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/159-blue-pushpin.png</href>
+        </Icon>
+        <hotSpot x="10" xunits="pixels" y="31" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-159-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-159-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-159-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-22-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/22-blue-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-22-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/22-blue-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-22">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-22-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-22-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-22-nodesc-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/22-blue-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-22-nodesc-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/22-blue-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-22-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-22-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-22-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-61-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/61-green-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-61-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/61-green-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-61">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-61-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-61-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-61-nodesc-normal">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/61-green-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-61-nodesc-highlight">
+      <IconStyle>
+        <scale>1.1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/61-green-dot.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-61-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-61-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-61-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-0000FF-3000-115-nodesc-normal">
+      <LineStyle>
+        <color>ffff0000</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73ff0000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-0000FF-3000-115-nodesc-highlight">
+      <LineStyle>
+        <color>ffff0000</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73ff0000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-0000FF-3000-115-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-0000FF-3000-115-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-0000FF-3000-115-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Folder>
+      <name>Untitled layer</name>
+      <Placemark>
+        <name>Princess Sumaya University for Technology - PSUT - جامعة الأميرة سمية للتكنولوجيا</name>
+        <description><![CDATA[Princes Sumaya university for technology (PSUT), founded in 1991, is the academic arm of the El Hassan Science City. It is owned by the Royal Scientific Society with a full student capacity of 1500. PSUT is a non-profit private university. Its main target is achieving quality research and education. <br><br>Website: http://www.psut.edu.jo]]></description>
+        <styleUrl>#icon-22</styleUrl>
+        <Point>
+          <coordinates>
+            35.876112,32.023248,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>PSUT King Abdullah II School for Electrical Engineering</name>
+        <description><![CDATA[The King Abdullah II School for Electrical Engineering at Princess Sumaya University for Technology consists currently of three departments, the Electronics Engineering Department that was founded in 1994, communication department that was founded in 2005 and the Computer Engineering Department that was founded in 2002. The School has 700 students currently enrolled in the three undergraduate degree programs. <br>The King Abdullah II School for Electrical Engineering offers its students with up-to-date, high-quality, internationally recognized programs of Computer, communication and Electronics Engineering. The School places a special emphasis on interdisciplinary programs and strives to educate its students in the fundamentals of the sciences as well as emerging technologies and their applications.]]></description>
+        <styleUrl>#icon-159</styleUrl>
+        <Point>
+          <coordinates>
+            35.876724,32.023313,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>PSUT Presidential Building</name>
+        <styleUrl>#icon-159-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            35.876316,32.023477,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>PSUT King Hussein School for Information Technology</name>
+        <description><![CDATA[The King Hussein School for Information Technology at Princess Sumaya University for Technology (PSUT) had been established since the  academic year of 2005 – 2006. This new establishment is  inline with PSUT’s master plan to develop and improve its facilities and faculties. The faculty consists of two academic departments:<br>   - Computer Science Department established in 1991. <br>   - Computer Graphics and Animation established in 2006. <br>The King Hussein School for Information Technology  currently offers a Bachelor of Science (BS) in Computer Science, Computer Graphics and Animation, and Master of Science in computer Science.]]></description>
+        <styleUrl>#icon-159</styleUrl>
+        <Point>
+          <coordinates>
+            35.875962,32.023532,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>PSUT El Hassan Library</name>
+        <styleUrl>#icon-159-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            35.876509,32.024078,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[PSUT Al Wafa'a Building]]></name>
+        <styleUrl>#icon-159-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            35.876262,32.022781,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>PSUT Student Affairs Building</name>
+        <styleUrl>#icon-159-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            35.876144,32.022495,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Royal Scientific Society (RSS) Headquarter - الجمعية العلمية الملكية - مبنى الرئاسة</name>
+        <description>Website: http://www.rss.gov.jo (http://www.rss.gov.jo/)</description>
+        <styleUrl>#icon-123</styleUrl>
+        <Point>
+          <coordinates>
+            35.878156,32.024728,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>El Hassan Science City Entrance 2</name>
+        <description>Website: http://www.ehsc.jo</description>
+        <styleUrl>#icon-61</styleUrl>
+        <Point>
+          <coordinates>
+            35.876359,32.024428,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>El Hassan Science City Entrance 1</name>
+        <description>Website: http://www.ehsc.jo</description>
+        <styleUrl>#icon-61</styleUrl>
+        <Point>
+          <coordinates>
+            35.876466,32.021917,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>PSUT Main Entrance</name>
+        <styleUrl>#icon-61-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            35.87535,32.022531,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>King Abdullah II School for Electrical Engineering - كلية الملك عبدالله الثاني للهندسة الكهربائية</name>
+        <styleUrl>#poly-0000FF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                35.876552,32.023532,0
+                35.876477,32.023304,0
+                35.876852,32.023122,0
+                35.877013,32.023459,0
+                35.876552,32.023532,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>PSUT Presidential Building - جامعة الأميرة سمية للتكنولوجيا, مبنى الرئاسة</name>
+        <styleUrl>#poly-0000FF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                35.876517,32.023518,0
+                35.876367,32.023636,0
+                35.87615,32.023586,0
+                35.876101,32.023423,0
+                35.87642,32.023311,0
+                35.876517,32.023518,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>King Hussein School for Information Technology - كلية الملك حسين لكنولوجيا المعلومات</name>
+        <styleUrl>#poly-0000FF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                35.875881,32.023757,0
+                35.875715,32.023409,0
+                35.875911,32.023357,0
+                35.87601,32.023429,0
+                35.876109,32.023641,0
+                35.875881,32.023757,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Students Affairs Deanship - عمادة شؤون الطلبة</name>
+        <styleUrl>#poly-0000FF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                35.87593,32.022536,0
+                35.876002,32.022408,0
+                35.87627,32.02252,0
+                35.876209,32.022631,0
+                35.87593,32.022536,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[Al Wafa'a Building - مبنى الوفاء]]></name>
+        <styleUrl>#poly-0000FF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                35.876117,32.022838,0
+                35.876158,32.022749,0
+                35.876375,32.022843,0
+                35.876335,32.022927,0
+                35.876117,32.022838,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Higher Council for Science and Technology - HCST - المجلس الأعلى للعلوم والتكنولوجيا</name>
+        <styleUrl>#icon-22-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            35.87756,32.024369,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

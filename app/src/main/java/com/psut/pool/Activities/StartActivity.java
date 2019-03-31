@@ -41,15 +41,10 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         //Buttons:
         btnConfirm.setOnClickListener(this);
 
-        //Firebase:
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        passPhoneNumber();
     }
 
-    //Passing the phone number to the VerifyPhone Activity
+    //Passing the phone number to the VerifyPhone Activity or continue to Main:
     private void passPhoneNumber() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {

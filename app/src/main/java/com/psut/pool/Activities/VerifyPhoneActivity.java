@@ -12,10 +12,11 @@ import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.psut.pool.Models.User;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 
@@ -31,7 +32,6 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
     private PhoneAuthProvider.ForceResendingToken resendingToken;
     private PhoneAuthCredential authCredential;
     private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     private String verificationID, phoneNumber, verificationId;
     private boolean isVerificating = false;
@@ -51,6 +51,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
 
         //Firebase Objects:
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         //Sign In:
         startPhoneNumberVerification(phoneNumber);
@@ -88,7 +89,8 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
                 if (e instanceof FirebaseTooManyRequestsException) {
                     Toast.makeText(VerifyPhoneActivity.this, Constants.LIMIT_EXCEEDED, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(VerifyPhoneActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(VerifyPhoneActivity.this, Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
 
@@ -116,7 +118,10 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
     private void signInWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential) {
         firebaseAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
+                User user = new User("+962" + phoneNumber);
+                databaseReference.child(Constants.DATABASE_USERS).child(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).updateChildren(user.toFirstMap());
                 Intent intent = new Intent(this, RegisterActivity.class);
+                intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
                 startActivity(intent);
                 finish();
             } else {

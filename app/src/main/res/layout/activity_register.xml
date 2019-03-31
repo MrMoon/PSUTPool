@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="#E6EDF3"
     android:scrollbars="vertical"
     tools:context=".Activities.RegisterActivity">
@@ -15,11 +15,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="15dp"
                 android:orientation="vertical"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:weightSum="8">
 
                 <ImageView
@@ -123,12 +124,12 @@
                         android:textSize="20sp" />
 
                     <Spinner
-                        android:id="@+id/spinnerPreferdDriverRegister"
+                        android:id="@+id/spinnerPreferredDriverRegister"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:entries="@array/Spn"
-                        android:textColor="#113E56"></Spinner>
+                        android:textColor="#113E56" />
                 </LinearLayout>
 
                 <TextView
@@ -192,17 +193,29 @@
                         android:enabled="true" />
                 </RelativeLayout>
 
-                <Button
-                    android:id="@+id/btnSignUpRegister"
-                    android:layout_width="125dp"
+                <EditText
+                    android:id="@+id/txtCarIDRegister"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/button_shape_corners"
-                    android:text="@string/sign_up"
-                    android:textAllCaps="false"
-                    android:textColor="#fff"
-                    android:textSize="15sp" />
+                    android:hint="@string/car_id"
+                    android:inputType="number"
+                    android:nextFocusDown="@id/switchDriverRegister"
+                    android:visibility="gone" />
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/btnSignUpRegister"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="20sp"
+        android:background="@drawable/button_shape_corners"
+        android:text="@string/sign_up"
+        android:textAllCaps="false"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:visibility="gone" />
 </RelativeLayout>
