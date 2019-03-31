@@ -131,6 +131,11 @@ public class RegisterActivity extends AppCompatActivity {
                 Customer customer = new Customer(uniID, name, phoneNumber, gender, preferred, "false", "0");
                 databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(customer.toCustomerMap());
             }
+
+            //Update UI:
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
