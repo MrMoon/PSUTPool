@@ -51,7 +51,7 @@ abstract public class User {
         return address;
     }
 
-    Map<String, Object> toUserMap(String s0, String s1) {
+    public Map<String, Object> toUserMap(String s0, String s1) {
         HashMap<String, Object> users = new HashMap<>();
         users.put("Uni ID", uniID);
         users.put("Name", name);

@@ -119,6 +119,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
             if (task.isSuccessful()) {
                 Intent intent = new Intent(this, RegisterActivity.class);
                 intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
+                //intent.putExtra(Constants.INTENT_ID , Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                 Toast.makeText(this, "Your Number is " + phoneNumber, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             } else {

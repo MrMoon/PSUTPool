@@ -10,6 +10,8 @@ public class Constants {
 
     //Keys:
     public static final String INTENT_PHONE_NUMBER_KEY = "phonenumber";
+    public static final String INTENT_ID = "phonenumber";
+    public static final String SHARED_ID = "ID";
     public static final Integer ERROR_DIALOG_REQUEST = 9001;
     public static final Integer LOCATION_PERMISSION_REQUEST_CODE = 9002;
     public static final Float DEFAULT_ZOOM = 15f;

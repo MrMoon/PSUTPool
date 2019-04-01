@@ -17,7 +17,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
     private Switch isDriverSwitch;
     private DatabaseReference databaseReference;
     private String phoneNumber, preferred, name, uniID, address, email, gender;
-    private boolean flag, isDriver;
+    private boolean isVerified, isDriver;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -51,7 +50,6 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        //Layout:
         layoutComponents();
 
         //Getting phone number from previous intent:
@@ -64,18 +62,12 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         if (!isVerified(phoneNumber)) {
             btnSignUp.setVisibility(View.VISIBLE);
             btnSignUp.setOnClickListener(v -> registerUser());
-        } else {
-            toMain();
         }
-
     }
 
     private boolean isVerified(String number) {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser == null) {
-            Toast.makeText(RegisterActivity.this, Constants.WELCOME, Toast.LENGTH_SHORT).show();
-            flag = false;
-        } else {
+        try {
+            isVerified = true;
             databaseReference.child(Constants.DATABASE_USERS)
                     .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                     .orderByChild(Constants.DATABASE_PHONE_NUMBER).equalTo(number)
@@ -83,23 +75,24 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() != null) {
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                flag = true;
-                                startActivity(intent);
-                                finish();
+                                toMain();
                             } else {
-                                flag = false;
+                                isVerified = false;
                                 Toast.makeText(RegisterActivity.this, Constants.WELCOME, Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            System.out.println(databaseError.toString());
                         }
                     });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
         }
-        return flag;
+        return isVerified;
     }
 
     private void registerUser() {
@@ -155,7 +148,6 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         }
         return isValidFlag;
     }
-
 
     private void toMain() {
         //Update UI:
