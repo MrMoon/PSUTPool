@@ -189,8 +189,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerInParent="true"
-                        android:enabled="true" />
+                        android:layout_centerInParent="true" />
                 </RelativeLayout>
 
                 <EditText
@@ -201,21 +200,20 @@
                     android:inputType="number"
                     android:nextFocusDown="@id/switchDriverRegister"
                     android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnSignUpRegister"
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="20sp"
+                    android:background="@drawable/button_shape_corners"
+                    android:text="@string/sign_up"
+                    android:textAllCaps="false"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/btnSignUpRegister"
-        android:layout_width="125dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_margin="20sp"
-        android:background="@drawable/button_shape_corners"
-        android:text="@string/sign_up"
-        android:textAllCaps="false"
-        android:textColor="#fff"
-        android:textSize="15sp"
-        android:visibility="gone" />
 </RelativeLayout>

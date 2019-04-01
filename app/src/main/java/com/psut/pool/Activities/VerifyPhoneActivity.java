@@ -16,7 +16,6 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.psut.pool.Models.User;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 
@@ -118,12 +117,10 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
     private void signInWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential) {
         firebaseAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
-                User user = new User("+962" + phoneNumber);
-                databaseReference.child(Constants.DATABASE_USERS).child(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).updateChildren(user.toFirstMap());
                 Intent intent = new Intent(this, RegisterActivity.class);
                 intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
+                Toast.makeText(this, "Your Number is " + phoneNumber, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
-                finish();
             } else {
                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                     txtCode.setError(Constants.INVALID_CODE);

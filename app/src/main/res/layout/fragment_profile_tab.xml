@@ -35,9 +35,10 @@
             android:layout_marginTop="10dp"
             android:text="@string/start_driving"
             android:textColor="#113E56"
-            android:textSize="23sp" />
+            android:textSize="23sp"
+            android:visibility="gone" />
 
-        <android.support.v7.widget.SwitchCompat
+        <Switch
             android:id="@+id/switchStartDrivingProfileFrag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,6 +46,7 @@
             android:layout_alignBottom="@+id/txtStartDrivingProfileFrag"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
+            android:visibility="gone"
             android:enabled="true" />
 
         <LinearLayout

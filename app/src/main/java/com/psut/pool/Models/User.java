@@ -3,7 +3,7 @@ package com.psut.pool.Models;
 import java.util.HashMap;
 import java.util.Map;
 
-public class User {
+abstract public class User {
     private String uniID, name, phoneNumber, gender, preferred, isDriver, address;
 
     public User() {
@@ -50,13 +50,6 @@ public class User {
     public String getAddress() {
         return address;
     }
-
-    public Map<String, Object> toFirstMap() {
-        HashMap<String, Object> users = new HashMap<>();
-        users.put("Phone Number", phoneNumber);
-        return users;
-    }
-
 
     Map<String, Object> toUserMap(String s0, String s1) {
         HashMap<String, Object> users = new HashMap<>();
