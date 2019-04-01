@@ -63,7 +63,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot != null) {
+                        if (dataSnapshot.getValue() != null) {
                             txtStartDriving.setVisibility(View.VISIBLE);
                             switchIsDriving.setVisibility(View.VISIBLE);
                         }
