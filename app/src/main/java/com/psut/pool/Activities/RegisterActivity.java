@@ -3,7 +3,6 @@ package com.psut.pool.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -14,14 +13,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
 import com.psut.pool.R;
@@ -59,40 +54,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         //Firebase Objects:
         databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
 
-        if (!isVerified(phoneNumber)) {
-            btnSignUp.setVisibility(View.VISIBLE);
-            btnSignUp.setOnClickListener(v -> registerUser());
-        }
-    }
-
-    private boolean isVerified(String number) {
-        try {
-            isVerified = true;
-            databaseReference.child(Constants.DATABASE_USERS)
-                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                    .orderByChild(Constants.DATABASE_PHONE_NUMBER).equalTo(number)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.getValue() != null) {
-                                toMain();
-                            } else {
-                                isVerified = false;
-                                Toast.makeText(RegisterActivity.this, Constants.WELCOME, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            System.out.println(databaseError.toString());
-                        }
-                    });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
-        }
-        return isVerified;
+        btnSignUp.setOnClickListener(v -> registerUser());
     }
 
     private void registerUser() {
@@ -100,11 +62,11 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         if (isValid()) {
             //User Object:
             if (isDriver) {
-                Driver driver = new Driver(uniID, name, phoneNumber, gender, preferred, "true", txtCarID.getText().toString()); //Driver Object
+                Driver driver = new Driver(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", txtCarID.getText().toString());
                 databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(driver.toDriverMap()); //Database writing
                 toMain();   //Update UI
             } else {
-                Customer customer = new Customer(uniID, name, "+962" + phoneNumber, gender, preferred, "false", "0"); //Customer Object
+                Customer customer = new Customer(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", "0");
                 databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(customer.toCustomerMap()); //Database writing
                 toMain();   //Update UI
             }

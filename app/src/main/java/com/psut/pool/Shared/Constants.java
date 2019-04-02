@@ -9,7 +9,7 @@ public class Constants {
     public static final String NOT_VALID_INPUT = "Please Enter a Valid value";
 
     //Keys:
-    public static final String INTENT_PHONE_NUMBER_KEY = "phonenumber";
+    public static final String INTENT_PHONE_NUMBER_KEY = "Phone Number";
     public static final String INTENT_ID = "phonenumber";
     public static final String SHARED_ID = "ID";
     public static final Integer ERROR_DIALOG_REQUEST = 9001;

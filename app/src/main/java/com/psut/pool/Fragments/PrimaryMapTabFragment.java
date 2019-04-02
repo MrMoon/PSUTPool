@@ -143,9 +143,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 if (markerPoints.size() > 1) {
                     markerPoints.clear();
                     map.clear();
+                    resetFragment();
                 }
 
                 //Adding new item to the list:
+                resetFragment();
                 markerPoints.add(latLng);
 
                 //Setting the position of the marker:

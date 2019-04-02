@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 import com.psut.pool.Shared.Layout;
-import com.psut.pool.Shared.PreferencesHelper;
 
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
     private View view;
     private TextView txtPersonalInfo, txtMyRides, txtWallet, txtLogOut, txtStartDriving;
     private Switch switchIsDriving;
-    private String id;
+    private String uid;
     private boolean isDriver, isDriving;
 
 
@@ -39,13 +39,54 @@ public class ProfileTabFragment extends Fragment implements Layout {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Objects:
         view = inflater.inflate(R.layout.fragment_profile_tab, null);
+        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         layoutComponents();
 
-        isDriver();
-
         return view;
+    }
+
+    private void isDriver() {
+        if (uid != null) {
+            try {
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                databaseReference.child(Constants.DATABASE_USERS)
+                        .child(uid)
+                        .orderByChild(Constants.DATABASE_PHONE_NUMBER)
+                        .equalTo(Boolean.toString(true))
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.getValue() != null) {
+                                    switchIsDriving.setVisibility(View.VISIBLE);
+                                    txtStartDriving.setVisibility(View.VISIBLE);
+                                } else {
+                                    switchIsDriving.setVisibility(View.GONE);
+                                    txtStartDriving.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                System.out.println(databaseError.toString());
+                            }
+                        });
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    uid = firebaseUser.getUid();
+                }
+            };
+            return;
+        }
     }
 
     @Override
@@ -61,41 +102,6 @@ public class ProfileTabFragment extends Fragment implements Layout {
         switchIsDriving.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isDriving = isChecked;
         });
-
-        //Getting ID:
-        PreferencesHelper preferencesHelper = new PreferencesHelper(Objects.requireNonNull(getActivity()));
-        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        id = preferencesHelper.loadString(Constants.SHARED_ID, uid);
-    }
-
-    private void isDriver() {
-        try {
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child("Users")
-                    .child(id)
-                    .orderByChild(Constants.DATABASE_PHONE_NUMBER)
-                    .equalTo(Boolean.toString(true))
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.getValue() != null) {
-                                switchIsDriving.setVisibility(View.VISIBLE);
-                                txtStartDriving.setVisibility(View.VISIBLE);
-                            } else {
-                                switchIsDriving.setVisibility(View.GONE);
-                                txtStartDriving.setVisibility(View.GONE);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            System.out.println(databaseError.toString());
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getActivity(), Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override

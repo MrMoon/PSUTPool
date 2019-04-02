@@ -2,7 +2,6 @@ package com.psut.pool.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,14 +14,15 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.psut.pool.R;
+import com.psut.pool.Shared.Authentication;
 import com.psut.pool.Shared.Constants;
+import com.psut.pool.Shared.Layout;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class VerifyPhoneActivity extends AppCompatActivity implements View.OnClickListener {
+public class VerifyPhoneActivity extends Authentication implements View.OnClickListener, Layout {
 
     //Global Variables and Objects:
     private EditText txtCode;
@@ -32,8 +32,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
     private PhoneAuthCredential authCredential;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
-    private String verificationID, phoneNumber, verificationId;
-    private boolean isVerificating = false;
+    private String verificationID, phoneNumber, uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +40,19 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_verify_phone);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        //Layout Components:
-        txtCode = findViewById(R.id.txtCodeVerfiy);
-        btnConfirm = findViewById(R.id.btnConfirmVerfiy);
+        layoutComponents();
 
-        //Getting Phone Number:
-        phoneNumber = getIntent().getStringExtra(Constants.INTENT_PHONE_NUMBER_KEY);
-
-        //Firebase Objects:
+        //Objects:
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        phoneNumber = getIntent().getStringExtra(Constants.INTENT_PHONE_NUMBER_KEY);
+        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+        //Checking if user already exists
+        Authentication.isVerified(uid, this, btnConfirm);
 
         //Sign In:
         startPhoneNumberVerification(phoneNumber);
+
         btnConfirm.setOnClickListener(this);
     }
 
@@ -111,7 +110,6 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
                 this,
                 callbacks
         );
-        isVerificating = true;
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential) {
@@ -119,7 +117,6 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
             if (task.isSuccessful()) {
                 Intent intent = new Intent(this, RegisterActivity.class);
                 intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
-                //intent.putExtra(Constants.INTENT_ID , Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                 Toast.makeText(this, "Your Number is " + phoneNumber, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             } else {
@@ -130,5 +127,16 @@ public class VerifyPhoneActivity extends AppCompatActivity implements View.OnCli
                 }
             }
         });
+    }
+
+    @Override
+    public void layoutComponents() {
+        txtCode = findViewById(R.id.txtCodeVerfiy);
+        btnConfirm = findViewById(R.id.btnConfirmVerfiy);
+    }
+
+    @Override
+    public void getLayoutComponents() {
+
     }
 }

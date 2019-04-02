@@ -4,62 +4,72 @@ import java.util.HashMap;
 import java.util.Map;
 
 abstract public class User {
-    private String uniID, name, phoneNumber, gender, preferred, isDriver, address;
+    private String name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status;
 
     public User() {
 
     }
 
-    User(String uniID, String name, String phoneNumber, String gender, String preferred, String isDriver) {
-        this.uniID = uniID;
+    public User(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status) {
         this.name = name;
+        this.email = email;
+        this.uniID = uniID;
         this.phoneNumber = phoneNumber;
-        this.gender = gender;
+        this.address = address;
         this.preferred = preferred;
+        this.gender = gender;
         this.isDriver = isDriver;
-    }
-
-    public User(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getUniID() {
-        return uniID;
+        this.status = status;
     }
 
     public String getName() {
         return name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUniID() {
+        return uniID;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getPreferred() {
-        return preferred;
-    }
-
-    public String getIsDriver() {
-        return isDriver;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public Map<String, Object> toUserMap(String s0, String s1) {
+    public String getPreferred() {
+        return preferred;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getIsDriver() {
+        return isDriver;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Map<String, Object> toUserMap(String key, String value) {
         HashMap<String, Object> users = new HashMap<>();
-        users.put("Uni ID", uniID);
         users.put("Name", name);
+        users.put("E-Mail", email);
+        users.put("University ID", uniID);
         users.put("Phone Number", phoneNumber);
-        users.put("Gender", gender);
+        users.put("Address", address);
         users.put("Preferred", preferred);
+        users.put("Gender", gender);
         users.put("Driver", isDriver);
-        users.put(s0, s1);
+        users.put("Status", status);
+        users.put(key, value);
         return users;
     }
 }

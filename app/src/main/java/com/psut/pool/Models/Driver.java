@@ -5,8 +5,12 @@ import java.util.Map;
 public class Driver extends User {
     private String carID;
 
-    public Driver(String uniID, String name, String phoneNumber, String gender, String preferred, String isDriver, String carID) {
-        super(uniID, name, phoneNumber, gender, preferred, isDriver);
+    public Driver() {
+
+    }
+
+    public Driver(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status, String carID) {
+        super(name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status);
         this.carID = carID;
     }
 
