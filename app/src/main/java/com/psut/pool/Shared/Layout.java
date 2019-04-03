@@ -1,7 +1,11 @@
 package com.psut.pool.Shared;
 
-public interface Layout {
+import android.view.View;
+
+public interface Layout extends View.OnClickListener {
     void layoutComponents();
 
     void getLayoutComponents();
+
+    void onClickLayout();
 }

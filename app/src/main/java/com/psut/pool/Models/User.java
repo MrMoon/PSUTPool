@@ -1,5 +1,7 @@
 package com.psut.pool.Models;
 
+import com.psut.pool.Shared.Constants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +10,10 @@ abstract public class User {
 
     public User() {
 
+    }
+
+    public User(String status) {
+        this.status = status;
     }
 
     public User(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status) {
@@ -60,16 +66,22 @@ abstract public class User {
 
     public Map<String, Object> toUserMap(String key, String value) {
         HashMap<String, Object> users = new HashMap<>();
-        users.put("Name", name);
-        users.put("E-Mail", email);
-        users.put("University ID", uniID);
-        users.put("Phone Number", phoneNumber);
-        users.put("Address", address);
-        users.put("Preferred", preferred);
-        users.put("Gender", gender);
-        users.put("Driver", isDriver);
-        users.put("Status", status);
+        users.put(Constants.DATABASE_NAME, name);
+        users.put(Constants.DATABASE_EMAIL, email);
+        users.put(Constants.DATABASE_UNI_ID, uniID);
+        users.put(Constants.DATABASE_PHONE_NUMBER, phoneNumber);
+        users.put(Constants.DATABASE_ADDRESS, address);
+        users.put(Constants.DATABASE_PREFERRED, preferred);
+        users.put(Constants.DATABASE_GENDER, gender);
+        users.put(Constants.DATABASE_IS_DRIVER, isDriver);
+        users.put(Constants.DATABASE_USER_STATUS, status);
         users.put(key, value);
         return users;
+    }
+
+    public Map<String, Object> toOfflineMap() {
+        HashMap<String, Object> offline = new HashMap<>();
+        offline.put(Constants.DATABASE_USER_STATUS, status);
+        return offline;
     }
 }

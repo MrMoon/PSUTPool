@@ -309,4 +309,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     public void getLayoutComponents() {
         search = txtSearch.getText().toString();
     }
+
+    @Override
+    public void onClickLayout() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
 }

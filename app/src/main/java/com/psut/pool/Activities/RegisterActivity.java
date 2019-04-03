@@ -13,6 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
 
     private void registerUser() {
         getLayoutComponents();
+        Toast.makeText(this, gender, Toast.LENGTH_SHORT).show();
         if (isValid()) {
             //User Object:
             if (isDriver) {
@@ -137,6 +139,11 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
             if (isChecked) txtCarID.setVisibility(View.VISIBLE);
             else txtCarID.setVisibility(View.GONE);
         });
+        radioGroupGender.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton radioButton = findViewById(checkedId);
+            Toast.makeText(this, radioButton.getText().toString(), Toast.LENGTH_SHORT).show();
+            gender = radioButton.getText().toString();
+        });
     }
 
     @Override
@@ -146,7 +153,15 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         uniID = txtID.getText().toString();
         address = txtAddress.getText().toString();
         preferred = spinnerPreferred.getSelectedItem().toString();
-        radioBtnMale.setOnClickListener(v -> gender = "Male");
-        radioBtnFemale.setOnClickListener(v -> gender = "Female");
+    }
+
+    @Override
+    public void onClickLayout() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

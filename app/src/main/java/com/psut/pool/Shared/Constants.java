@@ -22,6 +22,12 @@ public class Constants {
 
     //Database:
     public static final String DATABASE_USERS = "Users";
+    public static final String DATABASE_NAME = "Name";
+    public static final String DATABASE_EMAIL = "E-Mail";
+    public static final String DATABASE_UNI_ID = "University ID";
+    public static final String DATABASE_ADDRESS = "Address";
+    public static final String DATABASE_PREFERRED = "Preferred";
+    public static final String DATABASE_GENDER = "Gender";
     public static final String DATABASE_PHONE_NUMBER = "Phone Number";
     public static final String DATABASE_IS_DRIVER = "Driver";
     public static final String DATABASE_USER_STATUS = "Status";

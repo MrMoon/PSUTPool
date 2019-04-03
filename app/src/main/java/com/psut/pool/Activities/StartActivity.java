@@ -18,7 +18,7 @@ import com.psut.pool.Shared.Layout;
 
 import java.util.Objects;
 
-public class StartActivity extends AppCompatActivity implements View.OnClickListener, Layout {
+public class StartActivity extends AppCompatActivity implements Layout {
 
     //Global Variables and Objects:
     private DatabaseReference databaseReference;
@@ -80,5 +80,10 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void getLayoutComponents() {
         phoneNumber = txtPhoneNumber.getText().toString();
+    }
+
+    @Override
+    public void onClickLayout() {
+
     }
 }
