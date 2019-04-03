@@ -89,7 +89,6 @@ public class ProfileTabFragment extends Fragment implements Layout {
                 Toast.makeText(getActivity(), Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
             }
         } else {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
             FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) {
