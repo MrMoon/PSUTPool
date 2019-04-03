@@ -144,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         name = txtName.getText().toString();
         email = txtEmail.getText().toString();
         uniID = txtID.getText().toString();
-        address = txtName.getText().toString();
+        address = txtAddress.getText().toString();
         preferred = spinnerPreferred.getSelectedItem().toString();
         radioBtnMale.setOnClickListener(v -> gender = "Male");
         radioBtnFemale.setOnClickListener(v -> gender = "Female");

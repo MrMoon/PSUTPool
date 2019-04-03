@@ -45,10 +45,13 @@ public class VerifyPhoneActivity extends Authentication implements View.OnClickL
         //Objects:
         firebaseAuth = FirebaseAuth.getInstance();
         phoneNumber = getIntent().getStringExtra(Constants.INTENT_PHONE_NUMBER_KEY);
-        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
-        //Checking if user already exists
-        Authentication.isVerified(uid, this, btnConfirm);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+            //Checking if user already exists
+            Authentication.isVerified(uid, this);
+        } else {
+            btnConfirm.setVisibility(View.VISIBLE);
+        }
 
         //Sign In:
         startPhoneNumberVerification(phoneNumber);

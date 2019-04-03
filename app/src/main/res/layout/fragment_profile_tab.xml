@@ -35,8 +35,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/start_driving"
             android:textColor="#113E56"
-            android:textSize="23sp"
-            android:visibility="gone" />
+            android:textSize="23sp" />
 
         <Switch
             android:id="@+id/switchStartDrivingProfileFrag"
@@ -46,7 +45,6 @@
             android:layout_alignBottom="@+id/txtStartDrivingProfileFrag"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:visibility="gone"
             android:enabled="true" />
 
         <LinearLayout

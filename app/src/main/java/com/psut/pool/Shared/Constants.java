@@ -24,4 +24,6 @@ public class Constants {
     public static final String DATABASE_USERS = "Users";
     public static final String DATABASE_PHONE_NUMBER = "Phone Number";
     public static final String DATABASE_IS_DRIVER = "Driver";
+    public static final String DATABASE_USER_STATUS = "Status";
+
 }

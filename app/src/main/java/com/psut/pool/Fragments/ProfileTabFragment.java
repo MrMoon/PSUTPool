@@ -45,6 +45,12 @@ public class ProfileTabFragment extends Fragment implements Layout {
 
         layoutComponents();
 
+        txtLogOut.setOnClickListener(v -> {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child(Constants.DATABASE_USERS).child(Constants.DATABASE_USER_STATUS).setValue("Offline");
+            FirebaseAuth.getInstance().signOut();
+        });
+
         return view;
     }
 
@@ -54,23 +60,28 @@ public class ProfileTabFragment extends Fragment implements Layout {
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                 databaseReference.child(Constants.DATABASE_USERS)
                         .child(uid)
-                        .orderByChild(Constants.DATABASE_PHONE_NUMBER)
-                        .equalTo(Boolean.toString(true))
+                        .child(Constants.DATABASE_IS_DRIVER)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.getValue() != null) {
-                                    switchIsDriving.setVisibility(View.VISIBLE);
-                                    txtStartDriving.setVisibility(View.VISIBLE);
+                                if (dataSnapshot.exists()) {
+                                    String isDriver = dataSnapshot.getValue().toString();
+                                    if (isDriver.equalsIgnoreCase("false")) {
+                                        switchIsDriving.setVisibility(View.GONE);
+                                        txtStartDriving.setVisibility(View.GONE);
+                                    } else {
+                                        Toast.makeText(getContext(), "Welcome Drive :)", Toast.LENGTH_SHORT).show();
+                                        switchIsDriving.setVisibility(View.VISIBLE);
+                                        txtStartDriving.setVisibility(View.VISIBLE);
+                                    }
                                 } else {
-                                    switchIsDriving.setVisibility(View.GONE);
-                                    txtStartDriving.setVisibility(View.GONE);
+                                    Toast.makeText(getContext(), "Empty", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-                                System.out.println(databaseError.toString());
+
                             }
                         });
             } catch (Exception e) {
