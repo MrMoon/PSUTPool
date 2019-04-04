@@ -274,6 +274,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 locationTask.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         currentLocation = task.getResult();
+
                         if (currentLocation != null) {
                             moveCamera(new LatLng(currentLocation.getLatitude()
                                     , currentLocation.getLongitude()), 15f);

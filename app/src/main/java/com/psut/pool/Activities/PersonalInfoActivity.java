@@ -59,26 +59,30 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
     }
 
     private void readPersonalInfo() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference
-                .child(Constants.DATABASE_USERS)
-                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            txtName.setText(Constants.DATABASE_NAME + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_NAME).getValue()).toString());
-                            txtId.setText(Constants.DATABASE_UNI_ID + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_UNI_ID).getValue()).toString());
-                            txtNumber.setText(Constants.DATABASE_PHONE_NUMBER + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_PHONE_NUMBER).getValue()).toString());
+        try {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference
+                    .child(Constants.DATABASE_USERS)
+                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                txtName.setText(Constants.DATABASE_NAME + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_NAME).getValue()).toString());
+                                txtId.setText(Constants.DATABASE_UNI_ID + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_UNI_ID).getValue()).toString());
+                                txtNumber.setText(Constants.DATABASE_PHONE_NUMBER + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_PHONE_NUMBER).getValue()).toString());
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
