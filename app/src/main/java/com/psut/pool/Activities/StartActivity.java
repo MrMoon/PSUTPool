@@ -11,8 +11,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.psut.pool.R;
+import com.psut.pool.Shared.Authentication;
 import com.psut.pool.Shared.Constants;
 import com.psut.pool.Shared.Layout;
 
@@ -65,7 +67,14 @@ public class StartActivity extends AppCompatActivity implements Layout {
     @Override
     public void onClick(View v) {
         if (v == btnConfirm) {
-            passPhoneNumber();
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Toast.makeText(this, "Just A Min", Toast.LENGTH_SHORT).show();
+                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+                //Checking if user already exists
+                Authentication.isVerified(uid, this);
+            } else {
+                passPhoneNumber();
+            }
         }
     }
 

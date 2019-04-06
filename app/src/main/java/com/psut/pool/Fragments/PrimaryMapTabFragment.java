@@ -54,7 +54,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
     private String[] permissions;
-    private String search;
     private Double latitude, longitude;
     private boolean isPermissionGranted;
 
@@ -108,7 +107,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     }
                     isPermissionGranted = true;
                     intitMap();
-                    resetFragment();
                 }
         }
     }
@@ -119,11 +117,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
+    //Setting up the after it's ready
     @Override
-    public void onMapReady(GoogleMap googleMap) {   //Setting up the after it's ready
-        setupMapSettings(googleMap);
-        if (isPermissionGranted) {  //Re-Checking the permissions
-            getLocation();
+    public void onMapReady(GoogleMap googleMap) {
+        //Re-Checking the permissions
+        if (isPermissionGranted) {
             if (ActivityCompat
                     .checkSelfPermission(Objects.requireNonNull(getActivity())
                             , Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -131,11 +129,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 return;
             }
 
+            getLocation();
             setupSearch();
-
             map = googleMap;
-
             currentLocationButton();
+            setupMapSettings(map);
 
             //Markers:
             map.setOnMapClickListener(latLng -> {
@@ -143,11 +141,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 if (markerPoints.size() > 1) {
                     markerPoints.clear();
                     map.clear();
-                    resetFragment();
                 }
 
                 //Adding new item to the list:
-                resetFragment();
                 markerPoints.add(latLng);
 
                 //Setting the position of the marker:
@@ -157,9 +153,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 //Adding Marker:
                 map.addMarker(markerOptions);
 
-                //Getting latitude and longitude:
+                //Markers Set:
                 try {
-                    //Getting current Location:
+                    //Getting latitude and longitude:
                     latitude = currentLocation.getLatitude();
                     longitude = currentLocation.getLongitude();
 
@@ -167,13 +163,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     destination = markerPoints.get(0);
                     currentLatLng = new LatLng(latitude, longitude);
                     markerPoints.add(currentLatLng);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    resetFragment();
-                }
 
-                //Markers Set:
-                try {
                     MarkerOptions endLocation = new MarkerOptions().position(destination)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 
@@ -205,6 +195,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     @SuppressLint("MissingPermission")
     private void setupMapSettings(GoogleMap googleMap) {
         map = googleMap;
+        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setBuildingsEnabled(true);
@@ -274,10 +265,13 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 locationTask.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         currentLocation = task.getResult();
-
+                        //Getting current Location:
                         if (currentLocation != null) {
-                            moveCamera(new LatLng(currentLocation.getLatitude()
-                                    , currentLocation.getLongitude()), 15f);
+                            latitude = currentLocation.getLatitude();
+                            longitude = currentLocation.getLongitude();
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Constants.DEFAULT_ZOOM);
+                        } else {
+                            Toast.makeText(getActivity(), "Null", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(getActivity(), Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
@@ -295,9 +289,10 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         markerPoints.clear();
         map.clear();
         fragmentTransaction.detach(this).attach(this).commit();
+        getLocation();
     }
 
-    private void moveCamera(LatLng lng, Float zoom) {   //Setting up the view on the map and moving the camera to lng location
+    private void moveCamera(LatLng lng, Float zoom) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(lng, zoom));
     }
 
@@ -308,16 +303,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void getLayoutComponents() {
-        search = txtSearch.getText().toString();
+        String search = txtSearch.getText().toString();
     }
 
     @Override
     public void onClickLayout() {
-
     }
 
     @Override
     public void onClick(View v) {
-
     }
 }

@@ -74,12 +74,12 @@ public class ProfileTabFragment extends Fragment implements Layout {
                                         txtStartDriving.setVisibility(View.GONE);
                                     } else {
                                         isDriver = true;
-                                        Toast.makeText(getActivity(), "Welcome Drive :)", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Welcome Drive :)", Toast.LENGTH_SHORT).show();
                                         switchIsDriving.setVisibility(View.VISIBLE);
                                         txtStartDriving.setVisibility(View.VISIBLE);
                                     }
                                 } else {
-                                    Toast.makeText(getActivity(), "Empty", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Empty", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
@@ -99,7 +99,6 @@ public class ProfileTabFragment extends Fragment implements Layout {
                     uid = firebaseUser.getUid();
                 }
             };
-            return;
         }
     }
 

@@ -15,20 +15,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activities.WalletActivity" />
-        <activity android:name=".Activities.VerifyPhoneActivity" />
-        <activity android:name=".Activities.PersonalInfoActivity" />
-        <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.RegisterActivity" />
-        <activity android:name=".Activities.StartActivity">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity
+            android:name=".Activities.WalletActivity"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Activities.VerifyPhoneActivity"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Activities.PersonalInfoActivity"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Activities.MainActivity"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Activities.RegisterActivity"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Activities.StartActivity"
+            tools:ignore="InnerclassSeparator">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/APIKey" />

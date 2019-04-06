@@ -3,6 +3,7 @@ package com.psut.pool.Models;
 import java.util.Map;
 
 public class Customer extends User {
+    //Global Variables and Objects:
     private String accountType;
 
     public Customer() {

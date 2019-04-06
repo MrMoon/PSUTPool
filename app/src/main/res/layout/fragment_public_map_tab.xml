@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/imgPublicMapPublicFrag"
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/imgPublicMapFragPublic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/public_map" />
+        android:scaleType="fitCenter" />
 </RelativeLayout>
 
 

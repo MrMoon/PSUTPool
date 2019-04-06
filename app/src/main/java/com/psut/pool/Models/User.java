@@ -6,17 +6,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 abstract public class User {
+    //Global Variables and Objects:
     private String name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status;
 
-    public User() {
+    User() {
 
     }
 
-    public User(String status) {
+    User(String status) {
         this.status = status;
     }
 
-    public User(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status) {
+    User(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status) {
         this.name = name;
         this.email = email;
         this.uniID = uniID;

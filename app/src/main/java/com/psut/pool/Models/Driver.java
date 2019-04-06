@@ -1,9 +1,16 @@
 package com.psut.pool.Models;
 
+import android.os.Build;
+
+import com.psut.pool.Shared.Constants;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class Driver extends User {
+    //Global Variables and Objects:
     private String carID;
+    private Car car;
 
     public Driver() {
 
@@ -18,7 +25,22 @@ public class Driver extends User {
         this.carID = carID;
     }
 
+    public Driver(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status, String carID, Car car) {
+        super(name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status);
+        this.carID = carID;
+        this.car = car;
+    }
+
     public Map<String, Object> toDriverMap() {
-        return toUserMap("Car ID", carID);
+        return toUserMap(Constants.DATABASE_DRIVER_CAR_ID, carID);
+    }
+
+    public Map<String, Object> toDriverCarMap() {
+        HashMap<String, Object> driverCars = new HashMap<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            driverCars.forEach(toUserMap("Car ID", carID)::putIfAbsent);
+            driverCars.forEach(car.toCarMap()::putIfAbsent);
+        }
+        return driverCars;
     }
 }
