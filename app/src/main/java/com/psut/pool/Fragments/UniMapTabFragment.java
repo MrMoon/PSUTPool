@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +43,7 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Global Variables and Objects:
         view = inflater.inflate(R.layout.fragment_uni_map_tab, null);
+        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Click the image for more info", Toast.LENGTH_SHORT).show();
         setupImage();
         getLocationPermission();
         return view;
@@ -89,7 +91,6 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
         Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -101,7 +102,6 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
 
         //Markers:
         setUpMarkers(Constants.toLocationMap());
-
     }
 
     private void setUpBonds() {
