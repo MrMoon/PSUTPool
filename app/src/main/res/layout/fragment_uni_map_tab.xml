@@ -3,6 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/imgUniMapFrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/unimap" />
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragmentUniMap"
         android:layout_width="match_parent"

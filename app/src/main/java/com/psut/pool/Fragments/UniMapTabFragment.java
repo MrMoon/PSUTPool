@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,14 +32,17 @@ import java.util.Objects;
 public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
 
     //Global Variables and Objects:
+    private View view;
     private GoogleMap map;
+    private ImageView imgUniMap;
 
     @SuppressLint("InflateParams")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Global Variables and Objects:
-        View view = inflater.inflate(R.layout.fragment_uni_map_tab, null);
+        view = inflater.inflate(R.layout.fragment_uni_map_tab, null);
+        setupImage();
         getLocationPermission();
         return view;
     }
@@ -128,5 +132,10 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
 
     private void moveCamera(LatLng latLng, float zoom) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
+    private void setupImage() {
+        imgUniMap = view.findViewById(R.id.imgUniMapFrag);
+        imgUniMap.setOnClickListener(v -> imgUniMap.setVisibility(View.GONE));
     }
 }
