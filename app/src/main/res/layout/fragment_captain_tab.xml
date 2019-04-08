@@ -42,4 +42,12 @@
             android:textColor="#000"
             android:textSize="15sp" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="50sp"
+        android:text="test" />
 </RelativeLayout>

@@ -40,6 +40,8 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:1.7.25'
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1'
     implementation 'com.googlecode.json-simple:json-simple:1.1'
+    implementation 'com.akexorcist:googledirectionlibrary:1.1.1'
+
 
     //Firebase:
     implementation 'com.google.firebase:firebase-database:16.1.0'

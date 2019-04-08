@@ -39,6 +39,10 @@ public class Constants {
     public static final String DATABASE_PHONE_NUMBER = "Phone Number";
     public static final String DATABASE_IS_DRIVER = "Driver";
     public static final String DATABASE_USER_STATUS = "Status";
+    public static final String DATABASE_USER_CURRENT_LOCATION = "Current Location";
+    public static final String DATABASE_USER_CURRENT_LATITUDE = "Current Latitude";
+    public static final String DATABASE_USER_CURRENT_LONGITUDE = "Current Longitude";
+
     public static final String DATABASE_DRIVER_CAR_ID = "Car ID";
     public static final String DATABASE_CAR_TYPE = "Type";
     public static final String DATABASE_CAR_MODEL = "Model";

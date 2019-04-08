@@ -19,7 +19,12 @@ public class Customer extends User {
         this.accountType = accountType;
     }
 
+    public Customer(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status, String curruntLatitude, String curruntLongitude, String accountType) {
+        super(name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status, curruntLatitude, curruntLongitude);
+        this.accountType = accountType;
+    }
+
     public Map<String, Object> toCustomerMap() {
-        return toUserMap("Account Type", accountType);
+        return toUserObjectMap("Account Type", accountType);
     }
 }

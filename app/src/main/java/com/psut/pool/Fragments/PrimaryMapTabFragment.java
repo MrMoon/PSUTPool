@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,11 +22,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,27 +45,36 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.psut.pool.Activities.MainActivity;
+import com.psut.pool.Models.Customer;
+import com.psut.pool.Models.Driver;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
-import com.psut.pool.Shared.Layout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallback, Layout {
+public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallback {
 
     //Global Variables and Objects:
     private EditText txtSearch;
     private View view;
     private GoogleMap map;
     private Location currentLocation;
+    private DatabaseReference databaseReference;
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
     private String[] permissions;
+    private String isDriver, apiKey = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w", distance, duration;
     private Double latitude, longitude;
     private boolean isPermissionGranted;
 
@@ -63,12 +84,18 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_captain_tab, null);
 
-        layoutComponents(); //Getting Layout
+        //Layout Components:
+        txtSearch = view.findViewById(R.id.txtSearchCaptainFrag);
 
         //Objects:
         markerPoints = new ArrayList<>();
+        databaseReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.DATABASE_USERS)
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .child(Constants.DATABASE_USER_CURRENT_LOCATION);
 
-        getLocationPermission();    //Starting the map setup:
+        //Starting the map setup:
+        getLocationPermission();
         return view;
     }
 
@@ -94,9 +121,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {   //Permission Results
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {   //Permission Results
         isPermissionGranted = false;
         switch (requestCode) {
             case 9002:
@@ -129,57 +154,17 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 return;
             }
 
+            map = googleMap;
             getLocation();
             setupSearch();
-            map = googleMap;
             currentLocationButton();
             setupMapSettings(map);
 
             //Markers:
-            map.setOnMapClickListener(latLng -> {
-                //Checking if there is no marker on the map:
-                if (markerPoints.size() > 1) {
-                    markerPoints.clear();
-                    map.clear();
-                }
+            map.setOnMapClickListener(this::setupMarkers);
 
-                //Adding new item to the list:
-                markerPoints.add(latLng);
-
-                //Setting the position of the marker:
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-
-                //Adding Marker:
-                map.addMarker(markerOptions);
-
-                //Markers Set:
-                try {
-                    //Getting latitude and longitude:
-                    latitude = currentLocation.getLatitude();
-                    longitude = currentLocation.getLongitude();
-
-                    //Setting up LatLng s :
-                    destination = markerPoints.get(0);
-                    currentLatLng = new LatLng(latitude, longitude);
-                    markerPoints.add(currentLatLng);
-
-                    MarkerOptions endLocation = new MarkerOptions().position(destination)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
-                    MarkerOptions startLocation = new MarkerOptions().position(currentLatLng)
-                            .title("You're Here")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    map.addMarker(startLocation);
-                    map.addMarker(endLocation);
-                    System.out.println(markerPoints.size());
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, Constants.DEFAULT_ZOOM - 0.5f));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), "Just a min", Toast.LENGTH_SHORT).show();
-                    resetFragment();
-                }
-            });
+            Button button = view.findViewById(R.id.btnTest);
+            button.setOnClickListener(v -> getDestinationInfo(map, destination, currentLatLng));
         }
     }
 
@@ -195,7 +180,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     @SuppressLint("MissingPermission")
     private void setupMapSettings(GoogleMap googleMap) {
         map = googleMap;
-        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        //map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setBuildingsEnabled(true);
@@ -236,7 +221,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
         if (!(addresses.isEmpty())) {
             Address address = addresses.get(0);
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), Constants.DEFAULT_ZOOM);
+            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()));
         }
     }
 
@@ -269,7 +254,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                         if (currentLocation != null) {
                             latitude = currentLocation.getLatitude();
                             longitude = currentLocation.getLongitude();
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Constants.DEFAULT_ZOOM);
+                            currentLatLng = new LatLng(latitude, longitude);
+
+                            writeData();
+
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                         } else {
                             Toast.makeText(getActivity(), "Null", Toast.LENGTH_SHORT).show();
                         }
@@ -283,6 +272,21 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    private void writeData() {
+        isDriver = MainActivity.getIsDriver();
+        if (isDriver.equalsIgnoreCase("true")) {
+            Driver driver = new Driver();
+            driver.setCurruntLatitude(latitude.toString());
+            driver.setCurruntLongitude(longitude.toString());
+            databaseReference.updateChildren(driver.toUserLocationMap());
+        } else {
+            Customer customer = new Customer();
+            customer.setCurruntLatitude(latitude.toString());
+            customer.setCurruntLongitude(longitude.toString());
+            databaseReference.updateChildren(customer.toUserLocationMap());
+        }
+    }
+
     private void resetFragment() {   //Fragment refresh
         FragmentTransaction fragmentTransaction = Objects.requireNonNull(getFragmentManager()).beginTransaction();
         if (Build.VERSION.SDK_INT >= 26) fragmentTransaction.setReorderingAllowed(false);
@@ -292,25 +296,108 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         getLocation();
     }
 
-    private void moveCamera(LatLng lng, Float zoom) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lng, zoom));
+    private void moveCamera(LatLng lng) {
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lng, Constants.DEFAULT_ZOOM));
     }
 
-    @Override
-    public void layoutComponents() {
-        txtSearch = view.findViewById(R.id.txtSearchCaptainFrag);
+    private void setupMarkers(LatLng latLng) {
+        //Checking if there is no marker on the map:
+        if (markerPoints.size() > 1) {
+            markerPoints.clear();
+            map.clear();
+        }
+
+        //Adding new item to the list:
+        markerPoints.add(latLng);
+
+        //Setting the position of the marker:
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+
+        //Adding Marker:
+        map.addMarker(markerOptions);
+
+        //Markers Set:
+        try {
+            //Getting latitude and longitude:
+            latitude = currentLocation.getLatitude();
+            longitude = currentLocation.getLongitude();
+
+            //Setting up LatLng s :
+            destination = markerPoints.get(0);
+            currentLatLng = new LatLng(latitude, longitude);
+            markerPoints.add(currentLatLng);
+
+            MarkerOptions endLocation = new MarkerOptions().position(destination)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+            MarkerOptions startLocation = new MarkerOptions().position(currentLatLng)
+                    .title("You're Here")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            map.addMarker(startLocation);
+            map.addMarker(endLocation);
+
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, Constants.DEFAULT_ZOOM - 0.5f));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "Just a min", Toast.LENGTH_SHORT).show();
+            resetFragment();
+        }
     }
 
-    @Override
-    public void getLayoutComponents() {
-        String search = txtSearch.getText().toString();
-    }
+    private void getDestinationInfo(GoogleMap googleMap, LatLng destination, LatLng origin) {
+        String serverKey = apiKey;
+        GoogleDirection.withServerKey(serverKey)
+                .from(origin)
+                .to(destination)
+                .transportMode(TransportMode.DRIVING)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+                        String status = direction.getStatus();
+                        switch (status) {
+                            case RequestResult.OK:
+                                //Getting data from json:
+                                Route route = direction.getRouteList().get(0);
+                                Leg leg = route.getLegList().get(0);
+                                Info distanceInfo = leg.getDistance();
+                                Info durationInfo = leg.getDuration();
+                                distance = distanceInfo.getText();
+                                duration = durationInfo.getText();
 
-    @Override
-    public void onClickLayout() {
-    }
+                                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), distance + " " + duration, Toast.LENGTH_SHORT).show();
 
-    @Override
-    public void onClick(View v) {
+                                //Drawing route:
+                                ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+                                PolylineOptions polylineOptions = DirectionConverter.createPolyline(Objects.requireNonNull(getActivity()),
+                                        directionPositionList, 5, Color.RED);
+                                googleMap.addPolyline(polylineOptions);
+
+                                //Bounds:
+                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                builder.include(origin);
+                                builder.include(destination);
+                                LatLngBounds bounds = builder.build();
+
+                                int width = getResources().getDisplayMetrics().widthPixels;
+                                int height = getResources().getDisplayMetrics().heightPixels;
+                                int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+
+                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                                map.animateCamera(cu);
+                                break;
+                            case RequestResult.NOT_FOUND:
+                                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "No routes exist", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "No", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                    }
+                });
     }
 }

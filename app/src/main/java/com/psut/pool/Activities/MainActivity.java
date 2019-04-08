@@ -1,23 +1,39 @@
 package com.psut.pool.Activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.Fragments.MainTabFragment;
 import com.psut.pool.Fragments.NotificationTabFragment;
 import com.psut.pool.Fragments.OfferTabFragment;
 import com.psut.pool.Fragments.ProfileTabFragment;
 import com.psut.pool.R;
+import com.psut.pool.Shared.Constants;
+import com.psut.pool.Shared.Layout;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Layout {
 
     //Global Variables and Objects:
     private ImageView imgCar, imgOffer, imgNotification, imgAccount;
     private Fragment fragmentMainTab, fragmentOfferTab, fragmentNofitication, fragmentProfile;
+    private static String isDriver;
+    private DatabaseReference databaseReference;
+
+    public static String getIsDriver() {
+        return isDriver;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +41,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
+        //Objects:
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
+
+        layoutComponents();
+        setupFragments();
+        isDriver = isDriver();
+    }
+
+    private String isDriver() {
+        databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(Constants.DATABASE_IS_DRIVER)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            isDriver = Objects.requireNonNull(dataSnapshot.getValue()).toString();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+        return isDriver;
+    }
+
+    @Override
+    public void layoutComponents() {
         //Layout Components:
         imgCar = findViewById(R.id.imgCarMain);
         imgOffer = findViewById(R.id.imgOfferMain);
@@ -36,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         fragmentOfferTab = new OfferTabFragment();
         fragmentNofitication = new NotificationTabFragment();
         fragmentProfile = new ProfileTabFragment();
+    }
+
+    private void setupFragments() {
 
         //Default Fragment:
         getSupportFragmentManager().beginTransaction().replace(R.id.linLayoutHomeMain, fragmentMainTab).commit();
@@ -72,5 +120,17 @@ public class MainActivity extends AppCompatActivity {
             imgNotification.setImageResource(R.drawable.ic_notifications_gray_24dp);
             getSupportFragmentManager().beginTransaction().replace(R.id.linLayoutHomeMain, fragmentMainTab).commit();
         });
+    }
+
+    @Override
+    public void getLayoutComponents() {
+    }
+
+    @Override
+    public void onClickLayout() {
+    }
+
+    @Override
+    public void onClick(View v) {
     }
 }
