@@ -44,6 +44,7 @@ public class StartActivity extends AppCompatActivity implements Layout {
     private void passPhoneNumber() {    //Passing the phone number to the VerifyPhone Activity
         getLayoutComponents();
         if (phoneNumber.isEmpty() || phoneNumber.length() < 9 || !Patterns.PHONE.matcher(phoneNumber).matches()) {
+            txtPhoneNumber.setError(Constants.NOT_VALID_INPUT);
             Toast.makeText(this, Constants.VALID_PHONE_NUMBER, Toast.LENGTH_SHORT).show();
         } else {
             setupDialog();
@@ -67,14 +68,18 @@ public class StartActivity extends AppCompatActivity implements Layout {
     @Override
     public void onClick(View v) {
         if (v == btnConfirm) {
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                Toast.makeText(this, "Just A Min", Toast.LENGTH_SHORT).show();
-                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                //Checking if user already exists
-                Authentication.isVerified(uid, this);
-            } else {
-                passPhoneNumber();
-            }
+            checkUser();
+        }
+    }
+
+    private void checkUser() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Toast.makeText(this, "Just A Min", Toast.LENGTH_SHORT).show();
+            String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+            //Checking if user already exists
+            Authentication.isVerified(uid, this);
+        } else {
+            passPhoneNumber();
         }
     }
 

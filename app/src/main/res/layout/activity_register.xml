@@ -105,7 +105,8 @@
                         android:id="@+id/txtAddressRegister"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/address" />
+                        android:hint="@string/address"
+                        android:nextFocusDown="@id/spinnerPreferredDriverRegister" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -192,14 +193,39 @@
                         android:layout_centerInParent="true" />
                 </RelativeLayout>
 
+                <!--Start Driver-->
                 <EditText
                     android:id="@+id/txtCarIDRegister"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/car_id"
-                    android:inputType="number"
-                    android:nextFocusDown="@id/switchDriverRegister"
+                    android:nextFocusDown="@id/txtCarTypeRegister"
                     android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/txtCarTypeRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/car_type"
+                    android:nextFocusDown="@id/txtCarModelRegister"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/txtCarModelRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/car_model"
+                    android:nextFocusDown="@id/txtCarColorRegister"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/txtCarColorRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/car_color"
+                    android:nextFocusDown="@id/btnSignUpRegister"
+                    android:visibility="gone" />
+                <!--End Driver-->
 
                 <Button
                     android:id="@+id/btnSignUpRegister"

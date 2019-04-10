@@ -13,7 +13,20 @@
           "package_name": "com.psut.pool"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "308053632492-fjqra53fhjq2hhl4m25e1tmr8n1s11io.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.psut.pool",
+            "certificate_hash": "9d8086f2423581abefb2c0510bc2c80605e22a75"
+          }
+        },
+        {
+          "client_id": "308053632492-ugodgsoqj52iaiv2jo6lum6bpbahfv2c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDxc7CL7kfpgmU9Gp6G4t15TkfErOlAoQo"

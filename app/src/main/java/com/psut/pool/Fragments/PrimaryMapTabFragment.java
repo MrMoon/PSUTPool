@@ -2,28 +2,27 @@ package com.psut.pool.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -37,6 +36,9 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,34 +62,34 @@ import com.psut.pool.Shared.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallback {
 
     //Global Variables and Objects:
-    private EditText txtSearch;
     private View view;
+    private Button btnRoute;
     private GoogleMap map;
     private Location currentLocation;
     private DatabaseReference databaseReference;
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
     private String[] permissions;
-    private String isDriver, apiKey = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w", distance, duration;
+    private String distance, duration, apiKey = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w";
     private Double latitude, longitude;
+    private int i = 0;
     private boolean isPermissionGranted;
+    private PlaceAutocompleteFragment placeAutoComplete;
 
     @SuppressLint("InflateParams")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_captain_tab, null);
-
-        //Layout Components:
-        txtSearch = view.findViewById(R.id.txtSearchCaptainFrag);
+        //view = inflater.inflate(R.layout.fragment_captain_tab, null);
+        view = inflater.inflate(R.layout.fragment_captain_tab, container, false);
 
         //Objects:
+        btnRoute = view.findViewById(R.id.btnRouteFragMain);
         markerPoints = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.DATABASE_USERS)
@@ -136,6 +138,18 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(Objects.requireNonNull(getActivity()).getApplicationContext(), data);
+                moveCamera(place.getLatLng());
+            } else {
+                System.out.println(PlaceAutocomplete.getStatus(Objects.requireNonNull(getActivity()).getApplicationContext(), data));
+            }
+        }
+    }
+
     private void intitMap() {   //Assigning map to the fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragmentMap);
@@ -156,15 +170,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             map = googleMap;
             getLocation();
-            setupSearch();
+
             currentLocationButton();
             setupMapSettings(map);
 
             //Markers:
             map.setOnMapClickListener(this::setupMarkers);
 
-            Button button = view.findViewById(R.id.btnTest);
-            button.setOnClickListener(v -> getDestinationInfo(map, destination, currentLatLng));
+            btnRoute.setOnClickListener(v -> getDestinationInfo(map, destination, currentLatLng, apiKey));
         }
     }
 
@@ -182,6 +195,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         map = googleMap;
         //map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         map.setMyLocationEnabled(true);
+
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setBuildingsEnabled(true);
         map.setIndoorEnabled(false);
@@ -191,38 +205,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         uiSettings.setScrollGesturesEnabled(true);
         uiSettings.setTiltGesturesEnabled(true);
         uiSettings.setRotateGesturesEnabled(true);
-    }
-
-    //Setting up the search txt:
-    @SuppressLint("ObsoleteSdkInt")
-    private void setupSearch() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
-            txtSearch.setOnEditorActionListener((v, actionId, event) -> {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER) {
-                    geoLocation(txtSearch.getText().toString());
-                }
-                return false;
-            });
-        }
-    }
-
-    //Search Results:
-    private void geoLocation(String s) {
-        Geocoder geocoder = new Geocoder(getActivity());
-        List<Address> addresses = new ArrayList<>();
-        try {
-            addresses = (geocoder.getFromLocationName(s, 1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (!(addresses.isEmpty())) {
-            Address address = addresses.get(0);
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()));
-        }
     }
 
     private void getLocation() {    //Getting user current location
@@ -273,7 +255,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void writeData() {
-        isDriver = MainActivity.getIsDriver();
+        String isDriver = MainActivity.getIsDriver();
         if (isDriver.equalsIgnoreCase("true")) {
             Driver driver = new Driver();
             driver.setCurruntLatitude(latitude.toString());
@@ -345,13 +327,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    private void getDestinationInfo(GoogleMap googleMap, LatLng destination, LatLng origin) {
-        String serverKey = apiKey;
+    private void getDestinationInfo(GoogleMap googleMap, LatLng destination, LatLng origin, String serverKey) {
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
                 .to(destination)
                 .transportMode(TransportMode.DRIVING)
                 .execute(new DirectionCallback() {
+                    @SuppressLint("DefaultLocale")
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
                         String status = direction.getStatus();
@@ -365,7 +348,13 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                 distance = distanceInfo.getText();
                                 duration = durationInfo.getText();
 
-                                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), distance + " " + duration, Toast.LENGTH_SHORT).show();
+                                System.out.println(distance);
+                                System.out.println(duration);
+
+                                //Cost:
+                                System.out.println("Cost = " + String.format("%.2f", getCost(duration, distance)));
+                                Snackbar snackbar = Snackbar.make(view, "Cost = " + String.format("%.2f", getCost(duration, distance)) + " JD", Snackbar.LENGTH_LONG);
+                                snackbar.show();
 
                                 //Drawing route:
                                 ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
@@ -399,5 +388,27 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     public void onDirectionFailure(Throwable t) {
                     }
                 });
+    }
+
+    private Float getCost(String d0, String d1) {
+        //distance(d1) , duration (d0):
+        d0 = d0.substring(0, d0.indexOf(" "));
+        d1 = d1.substring(0, d1.indexOf(" "));
+
+        float dur = Float.valueOf(d0);
+        float dis = Float.valueOf(d1);
+        System.out.println(dis);
+        System.out.println(dur);
+        float cost;
+
+        if (dis > 0 && dis <= 5) {
+            cost = 0.5f;
+        } else if (dis >= 6 && dis <= 11) {
+            cost = 1f;
+        } else {
+            cost = 2f;
+        }
+
+        return cost;
     }
 }

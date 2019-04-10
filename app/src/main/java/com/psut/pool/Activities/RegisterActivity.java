@@ -13,13 +13,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.psut.pool.Models.Car;
 import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
+import com.psut.pool.Models.User;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 import com.psut.pool.Shared.Layout;
@@ -29,14 +30,14 @@ import java.util.Objects;
 public class RegisterActivity extends AppCompatActivity implements Layout {
 
     //Global Variables and Objects:
-    private EditText txtName, txtEmail, txtID, txtPhoneNumber, txtAddress, txtCarID;
+    private EditText txtName, txtEmail, txtID, txtPhoneNumber, txtAddress, txtCarID, txtCarType, txtCarModel, txtCarColor;
     private Button btnSignUp;
     private Spinner spinnerPreferred;
     private RadioGroup radioGroupGender;
     private RadioButton radioBtnMale, radioBtnFemale;
     private Switch isDriverSwitch;
     private DatabaseReference databaseReference;
-    private String phoneNumber, preferred, name, uniID, address, email, gender;
+    private String phoneNumber, preferred, name, uniID, address, email, gender, carID, cartype, carModel, carColor;
     private boolean isVerified, isDriver;
 
     @SuppressLint("SetTextI18n")
@@ -59,23 +60,24 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
     }
 
     private void registerUser() {
-        getLayoutComponents();
-        Toast.makeText(this, gender, Toast.LENGTH_SHORT).show();
         if (isValid()) {
             //User Object:
+            User user;
             if (isDriver) {
-                Driver driver = new Driver(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", txtCarID.getText().toString());
-                databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(driver.toDriverMap()); //Database writing
+                Car car = new Car(cartype, carModel, carColor);
+                user = new Driver(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", txtCarID.getText().toString(), car);
+                databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Driver) user).toFullDriverMap()); //Database writing
                 toMain();   //Update UI
             } else {
-                Customer customer = new Customer(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", "0");
-                databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(customer.toCustomerMap()); //Database writing
+                user = new Customer(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", "0");
+                databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Customer) user).toCustomerMap()); //Database writing
                 toMain();   //Update UI
             }
         }
     }
 
     private boolean isValid() {
+        getLayoutComponents();
         boolean isValidFlag = true;
         if (TextUtils.isEmpty(txtName.getText().toString())) {
             txtName.setError(Constants.NOT_VALID_INPUT);
@@ -128,6 +130,9 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         txtPhoneNumber = findViewById(R.id.txtPhoneNumberRegister);
         txtAddress = findViewById(R.id.txtAddressRegister);
         txtCarID = findViewById(R.id.txtCarIDRegister);
+        txtCarType = findViewById(R.id.txtCarTypeRegister);
+        txtCarColor = findViewById(R.id.txtCarColorRegister);
+        txtCarModel = findViewById(R.id.txtCarModelRegister);
         btnSignUp = findViewById(R.id.btnSignUpRegister);
         spinnerPreferred = findViewById(R.id.spinnerPreferredDriverRegister);
         radioGroupGender = findViewById(R.id.radioGroupGendersRegister);
@@ -136,12 +141,20 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         isDriverSwitch = findViewById(R.id.switchDriverRegister);
         isDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isDriver = isChecked;
-            if (isChecked) txtCarID.setVisibility(View.VISIBLE);
-            else txtCarID.setVisibility(View.GONE);
+            if (!isChecked) {
+                txtCarID.setVisibility(View.GONE);
+                txtCarModel.setVisibility(View.GONE);
+                txtCarColor.setVisibility(View.GONE);
+                txtCarType.setVisibility(View.GONE);
+            } else {
+                txtCarID.setVisibility(View.VISIBLE);
+                txtCarModel.setVisibility(View.VISIBLE);
+                txtCarColor.setVisibility(View.VISIBLE);
+                txtCarType.setVisibility(View.VISIBLE);
+            }
         });
         radioGroupGender.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton radioButton = findViewById(checkedId);
-            Toast.makeText(this, radioButton.getText().toString(), Toast.LENGTH_SHORT).show();
             gender = radioButton.getText().toString();
         });
     }
@@ -153,6 +166,12 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         uniID = txtID.getText().toString();
         address = txtAddress.getText().toString();
         preferred = spinnerPreferred.getSelectedItem().toString();
+        if (isDriver) {
+            carColor = txtCarColor.getText().toString();
+            carModel = txtCarModel.getText().toString();
+            carID = txtCarID.getText().toString();
+            cartype = txtCarType.getText().toString();
+        }
     }
 
     @Override

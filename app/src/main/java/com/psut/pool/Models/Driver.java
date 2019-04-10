@@ -1,6 +1,7 @@
 package com.psut.pool.Models;
 
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.psut.pool.Shared.Constants;
 
@@ -25,8 +26,8 @@ public class Driver extends User {
         this.carID = carID;
     }
 
-    public Driver(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status, String curruntLatitude, String curruntLongitude, String carID, Car car) {
-        super(name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status, curruntLatitude, curruntLongitude);
+    public Driver(String name, String email, String uniID, String phoneNumber, String address, String preferred, String gender, String isDriver, String status, String carID, Car car) {
+        super(name, email, uniID, phoneNumber, address, preferred, gender, isDriver, status);
         this.carID = carID;
         this.car = car;
     }
@@ -39,12 +40,26 @@ public class Driver extends User {
         return toUserObjectMap(Constants.DATABASE_DRIVER_CAR_ID, carID);
     }
 
-    public Map<String, Object> toDriverCarMap() {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Map<String, Object> toFullDriverMap() {
         HashMap<String, Object> driverCars = new HashMap<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            driverCars.forEach(toUserObjectMap("Car ID", carID)::putIfAbsent);
-            driverCars.forEach(car.toCarMap()::putIfAbsent);
-        }
+        driverCars.putAll(toUserObjectMap(Constants.DATABASE_DRIVER_CAR_ID, carID));
+        driverCars.putAll(toCarMap());
+        driverCars.forEach((s, o) -> System.out.println(s + " , " + o));
         return driverCars;
+    }
+
+    public Map<String, Object> toCarMap() {
+        HashMap<String, Object> cars = new HashMap<>();
+        cars.put(Constants.DATABASE_CAR_TYPE, car.getType());
+        cars.put(Constants.DATABASE_CAR_MODEL, car.getModel());
+        cars.put(Constants.DATABASE_CAR_COLOR, car.getColor());
+        return cars;
+    }
+
+    public Map<String, Object> toDriverLocations(Object id) {
+        HashMap<String, Object> driverLocations = new HashMap<>(toUserLocationMap());
+        driverLocations.put("ID", id.toString());
+        return driverLocations;
     }
 }

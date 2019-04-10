@@ -123,6 +123,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
                 intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
                 Toast.makeText(this, "Your Number is " + phoneNumber, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
+                finish();
             } else {
                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                     txtCode.setError(Constants.INVALID_CODE);

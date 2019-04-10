@@ -78,8 +78,6 @@ public class ProfileTabFragment extends Fragment implements Layout {
                                         switchIsDriving.setVisibility(View.VISIBLE);
                                         txtStartDriving.setVisibility(View.VISIBLE);
                                     }
-                                } else {
-                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Empty", Toast.LENGTH_SHORT).show();
                                 }
                             }
 

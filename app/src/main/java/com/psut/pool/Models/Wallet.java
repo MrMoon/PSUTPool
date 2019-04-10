@@ -7,14 +7,15 @@ import java.util.Map;
 
 
 public class Wallet {
+    private static Float currentBalance;
     //Global Variables and Objects:
-    private String id, currentBalance, promocode;
+    private String id, promocode;
     private User user;
 
-    public Wallet(String id, String currentBalance, String promocode, User user) {
+    public Wallet(String id, String promocode, Float currentBalance, User user) {
         this.id = id;
-        this.currentBalance = currentBalance;
         this.promocode = promocode;
+        Wallet.currentBalance = currentBalance;
         this.user = user;
     }
 

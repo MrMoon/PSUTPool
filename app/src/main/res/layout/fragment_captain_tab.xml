@@ -9,45 +9,11 @@
         android:layout_width="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_height="match_parent" />
-
-    <RelativeLayout
-        android:id="@+id/revLayoutMainCaptainFrag"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/button_shape_corners_white"
-        android:elevation="10dp">
-
-        <ImageView
-            android:id="@+id/imgSearchCaptainFrag"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_search_blue_24dp" />
-
-        <EditText
-            android:id="@+id/txtSearchCaptainFrag"
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/imgSearchCaptainFrag"
-            android:hint="@string/enter_address_city_or_zip_code"
-            android:imeOptions="actionSearch"
-            android:lines="1"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="#000"
-            android:textSize="15sp" />
-    </RelativeLayout>
-
     <Button
-        android:id="@+id/btnTest"
+        android:id="@+id/btnRouteFragMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="50sp"
-        android:text="test" />
+        android:layout_alignBottom="@+id/fragmentMap"
+        android:layout_marginBottom="30sp"
+        android:text="@string/start_trip" />
 </RelativeLayout>

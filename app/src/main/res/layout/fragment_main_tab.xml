@@ -56,7 +56,6 @@
                 android:textColor="#113e56" />
         </LinearLayout>
     </LinearLayout>
-
     <LinearLayout
         android:id="@+id/linLayoutHomeMainFrag"
         android:layout_width="match_parent"

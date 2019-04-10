@@ -20,6 +20,7 @@ public class Constants {
     public static final String SHARED_ID = "ID";
     public static final Integer ERROR_DIALOG_REQUEST = 9001;
     public static final Integer LOCATION_PERMISSION_REQUEST_CODE = 9002;
+    public static final Integer LOCATION_AUTO_COMPLETE_REQUEST_CODE = 1010;
 
     //Maps:
     public static final Float DEFAULT_ZOOM = 15f;
@@ -42,11 +43,11 @@ public class Constants {
     public static final String DATABASE_USER_CURRENT_LOCATION = "Current Location";
     public static final String DATABASE_USER_CURRENT_LATITUDE = "Current Latitude";
     public static final String DATABASE_USER_CURRENT_LONGITUDE = "Current Longitude";
-
+    public static final String DATABASE_DRIVERS_LOCATIONS = "Drivers Locations";
     public static final String DATABASE_DRIVER_CAR_ID = "Car ID";
-    public static final String DATABASE_CAR_TYPE = "Type";
-    public static final String DATABASE_CAR_MODEL = "Model";
-    public static final String DATABASE_CAR_COLOR = "Color";
+    public static final String DATABASE_CAR_TYPE = "Car Type";
+    public static final String DATABASE_CAR_MODEL = "Car Model";
+    public static final String DATABASE_CAR_COLOR = "Car Color";
     //Uni Map:
     public static final Float UNI_MAP_DEFAULT_ZOOM = 17.5f;
     public static final LatLng UNI_MAP_MAIN = new LatLng(32.02324, 35.87611);
