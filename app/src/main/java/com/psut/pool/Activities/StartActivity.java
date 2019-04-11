@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -73,11 +74,13 @@ public class StartActivity extends AppCompatActivity implements Layout {
     }
 
     private void checkUser() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && !TextUtils.isEmpty(txtPhoneNumber.getText().toString())) {
             Toast.makeText(this, "Just A Min", Toast.LENGTH_SHORT).show();
             String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
             //Checking if user already exists
             Authentication.isVerified(uid, this);
+        } else if (TextUtils.isEmpty(txtPhoneNumber.getText().toString())) {
+            txtPhoneNumber.setError(Constants.NOT_VALID_INPUT);
         } else {
             passPhoneNumber();
         }

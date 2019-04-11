@@ -28,6 +28,8 @@ public class Constants {
     //Texts:
     public static final String TRUN_LOCATION_ON = "Please Turn on Your Location";
     public static final String WELCOME = "Welcome";
+    public static final String NEAREST_DRIVER = "Nearest Driver";
+    public static final String DESTINATION = "Destination";
 
     //Database:
     public static final String DATABASE_USERS = "Users";

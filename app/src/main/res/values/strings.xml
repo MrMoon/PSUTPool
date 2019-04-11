@@ -59,7 +59,8 @@
     <string name="car_color">Car Color</string>
     <string name="test">test</string>
     <string name="search_location">Search Location</string>
-    <string name="start_trip">Start Trip</string>
+    <string name="start">Start</string>
+    <string name="call">Call</string>
     <string-array name="Spn">
         <item>@string/Anyone</item>
         <item>@string/female</item>
