@@ -70,7 +70,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import Calling.CallPhone;
 
@@ -386,7 +385,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
                                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-                                testRead(databaseReference, currentLatLng);
+                                getNearestDriver(databaseReference, currentLatLng);
 
                                 map.animateCamera(cu);
 
@@ -407,11 +406,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    private void testRead(DatabaseReference reference, LatLng oirgin) {
-        ArrayList<String> list = new ArrayList<>();
+    private void getNearestDriver(DatabaseReference reference, LatLng oirgin) {
         Map<String, LatLng> driversLoctions = new HashMap<>();
         double[] latLng = new double[5];
-        float[] results = new float[1];
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -438,39 +435,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             }
         });
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private Map<String, LatLng> getNearestDriver(DatabaseReference reference, LatLng oirgin) {
-        Map<String, LatLng> nearestDrivers = new HashMap<>();
-        float[] results = new float[1];
-        reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).setValue("Test");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot uniqueKeySnap : dataSnapshot.getChildren()) {
-                    for (DataSnapshot currentLocationSnap : uniqueKeySnap.child(Constants.DATABASE_USER_CURRENT_LOCATION).getChildren()) {
-                        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), Objects.requireNonNull(currentLocationSnap.getValue()).toString(), Toast.LENGTH_SHORT).show();
-                        LatLng latLng = new LatLng(Double.valueOf(Objects.requireNonNull(currentLocationSnap.child(Constants.DATABASE_USER_CURRENT_LATITUDE).getValue()).toString()), Double.valueOf(Objects.requireNonNull(currentLocationSnap.child(Constants.DATABASE_USER_CURRENT_LONGITUDE).getValue()).toString()));
-                        System.out.println(latLng.toString());
-                        nearestDrivers.put(Objects.requireNonNull(uniqueKeySnap.getKey()), latLng);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                databaseError.toException().printStackTrace();
-            }
-        });
-        Map<String, LatLng> collect = nearestDrivers.entrySet().parallelStream().filter(stringLatLngEntry -> {
-            Location.distanceBetween(oirgin.latitude, oirgin.longitude, stringLatLngEntry.getValue().latitude, stringLatLngEntry.getValue().longitude, results);
-            return results[0] < 1.0;
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        System.out.println(nearestDrivers + "\n");
-        System.out.println(collect);
-        return collect;
     }
 
     public void call(String phoneNumber) {
