@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -71,8 +70,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import Calling.CallPhone;
-
 public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallback {
 
     //Global Variables and Objects:
@@ -80,7 +77,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private Button btnRoute;
     private GoogleMap map;
     private Location currentLocation;
-    private CallPhone callPhone;
     private DatabaseReference databaseReference;
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
@@ -99,7 +95,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         view = inflater.inflate(R.layout.fragment_captain_tab, container, false);
 
         //Objects:
-        callPhone = new CallPhone(getContext());
         btnRoute = view.findViewById(R.id.btnRouteFragMain);
         markerPoints = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference()
@@ -435,13 +430,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             }
         });
-    }
-
-    public void call(String phoneNumber) {
-        if (callPhone.isGranted()) {
-            String dial = "tel:" + phoneNumber;
-            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
-        }
     }
 
     private Float getCost(String d0, String d1) {

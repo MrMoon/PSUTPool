@@ -1,1 +1,1 @@
-include ':app', ':callandmessagelibrary-release(Full Version)'
+include ':app'
