@@ -17,6 +17,7 @@ public class Constants {
     //Keys:
     public static final String INTENT_PHONE_NUMBER_KEY = "Phone Number";
     public static final String INTENT_ID = "phonenumber";
+    public static final String INTENT_ID_STRING = "isDriver";
     public static final String SHARED_ID = "ID";
     public static final Integer ERROR_DIALOG_REQUEST = 9001;
     public static final Integer LOCATION_PERMISSION_REQUEST_CODE = 9002;
@@ -30,6 +31,7 @@ public class Constants {
     public static final String WELCOME = "Welcome";
     public static final String NEAREST_DRIVER = "Nearest Driver";
     public static final String DESTINATION = "Destination";
+    public static final String CONFIRM_RIDE = "Confirm Ride";
 
     //Database:
     public static final String DATABASE_USERS = "Users";
@@ -46,6 +48,7 @@ public class Constants {
     public static final String DATABASE_USER_CURRENT_LATITUDE = "Current Latitude";
     public static final String DATABASE_USER_CURRENT_LONGITUDE = "Current Longitude";
     public static final String DATABASE_DRIVERS_LOCATIONS = "Drivers Locations";
+    public static final String DATABASE_TRIP = "Trip";
     public static final String DATABASE_DRIVER_CAR_ID = "Car ID";
     public static final String DATABASE_CAR_TYPE = "Car Type";
     public static final String DATABASE_CAR_MODEL = "Car Model";

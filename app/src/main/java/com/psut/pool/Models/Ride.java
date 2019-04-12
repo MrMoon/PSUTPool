@@ -1,7 +1,5 @@
 package com.psut.pool.Models;
 
-import android.os.Build;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,12 +7,12 @@ public class Ride {
 
     //Global Variables and Objects:
     private String description, amount;
-    private Route route;
+    private TripRoute tripRoute;
 
-    public Ride(String description, String amount, Route route) {
+    public Ride(String description, String amount, TripRoute tripRoute) {
         this.description = description;
         this.amount = amount;
-        this.route = route;
+        this.tripRoute = tripRoute;
     }
 
     public Map<String, Object> toRideMap() {
@@ -26,10 +24,8 @@ public class Ride {
 
     public Map<String, Object> toFullRideMap() {
         HashMap<String, Object> fullRide = new HashMap<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fullRide.forEach(toRideMap()::putIfAbsent);
-            fullRide.forEach(route.toRouteMap()::putIfAbsent);
-        }
+        fullRide.putAll(toRideMap());
+        fullRide.putAll(tripRoute.toRouteMap());
         return fullRide;
     }
 }

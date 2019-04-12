@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -65,8 +67,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.Activities.MainActivity;
 import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
+import com.psut.pool.Models.Ride;
+import com.psut.pool.Models.Trip;
+import com.psut.pool.Models.TripRoute;
+import com.psut.pool.Models.User;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,6 +88,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     //Global Variables and Objects:
     private View view;
     private Button btnRoute;
+    private Dialog dialog;
+    private User user;
     private RelativeLayout relativeLayout;
     private GoogleMap map;
     private Location currentLocation;
@@ -89,6 +99,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private String[] permissions;
     private String distance, duration, apiKey = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w", lat, lon, id;
     private Double latitude, longitude;
+    private float tripCost;
     private int i = 0;
     private boolean isPermissionGranted;
 
@@ -281,7 +292,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             longitude = currentLocation.getLongitude();
                             currentLatLng = new LatLng(latitude, longitude);
 
-                            writeData(databaseReference);
+                            writeUserData(databaseReference);
 
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                         } else {
@@ -297,18 +308,18 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    private void writeData(DatabaseReference reference) {
+    private void writeUserData(DatabaseReference reference) {
         String isDriver = MainActivity.getIsDriver();
         if (isDriver.equalsIgnoreCase("true")) {
-            Driver driver = new Driver();
-            driver.setCurruntLatitude(latitude.toString());
-            driver.setCurruntLongitude(longitude.toString());
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(driver.toUserLocationMap());
+            user = new Driver();
+            user.setCurruntLatitude(latitude.toString());
+            user.setCurruntLongitude(longitude.toString());
+            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
         } else {
-            Customer customer = new Customer();
-            customer.setCurruntLatitude(latitude.toString());
-            customer.setCurruntLongitude(longitude.toString());
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(customer.toUserLocationMap());
+            user = new Customer();
+            user.setCurruntLatitude(latitude.toString());
+            user.setCurruntLongitude(longitude.toString());
+            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(user.toUserLocationMap());
         }
     }
 
@@ -398,8 +409,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                 duration = durationInfo.getText();
 
                                 //Cost:
-                                System.out.println("Cost = " + String.format("%.2f", getCost(duration, distance)));
-                                Snackbar snackbar = Snackbar.make(view, "Cost = " + String.format("%.2f", getCost(duration, distance)) + " JD", Snackbar.LENGTH_LONG);
+                                System.out.println("Cost Will be = " + String.format("%.2f", getCost(duration, distance)));
+                                Snackbar snackbar = Snackbar.make(view, "Cost Will Be = " + String.format("%.2f", getCost(duration, distance)) + " JD", Snackbar.LENGTH_LONG);
+                                tripCost = getCost(duration, distance);
                                 snackbar.show();
 
                                 //Drawing route:
@@ -440,6 +452,31 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 });
     }
 
+    private void setupDialog() {    //Setting up the dialog
+        dialog.setContentView(R.layout.layout_pop_up);
+        TextView textView = dialog.findViewById(R.id.txtNumberLayoutPopUp);
+        textView.setText(Constants.CONFIRM_RIDE);
+        dialog.setCancelable(false);
+        dialog.findViewById(R.id.btnEditLayoutPopUp).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btnYesLayoutPopUp).setOnClickListener(v -> writeTripData(databaseReference));
+        dialog.show();
+    }
+
+    private void writeTripData(DatabaseReference reference) {
+        //Getting the requirement:
+        float result[] = new float[1];
+        Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, destination.latitude, destination.longitude, result);
+        String discription = "Ride from " + currentLatLng.toString() + " to " + destination.toString() + " at " + DateTime.now().toString();
+
+        //Setting up the Objects:
+        TripRoute tripRoute = new TripRoute(currentLatLng.toString(), destination.toString(), String.valueOf(result[0]), "Moving");
+        Ride ride = new Ride(discription, String.valueOf(tripCost), tripRoute);
+        Trip trip = new Trip(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), "", user, ride);
+
+        //writing to the database:
+        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(Constants.DATABASE_TRIP).updateChildren(trip.toFullTripMap());
+    }
+
     @TargetApi(Build.VERSION_CODES.N)
     private void getNearestDriver(DatabaseReference reference, LatLng oirgin) {
         Map<String, LatLng> driversLoctions = new HashMap<>();
@@ -470,7 +507,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             }
         });
-
     }
 
     private Float getCost(String d0, String d1) {

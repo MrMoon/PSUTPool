@@ -3,12 +3,12 @@ package com.psut.pool.Models;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Route {
+public class TripRoute {
 
     //Global Variables and Objects:
     private String pickUpLocation, dropOffLocation, distance, status;
 
-    public Route(String pickUpLocation, String dropOffLocation, String distance, String status) {
+    public TripRoute(String pickUpLocation, String dropOffLocation, String distance, String status) {
         this.pickUpLocation = pickUpLocation;
         this.dropOffLocation = dropOffLocation;
         this.distance = distance;

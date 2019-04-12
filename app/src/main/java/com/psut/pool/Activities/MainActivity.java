@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity implements Layout {
         return isDriver;
     }
 
+    public static void setIsDriver(String isDriver) {
+        MainActivity.isDriver = isDriver;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

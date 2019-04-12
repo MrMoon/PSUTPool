@@ -1,7 +1,5 @@
 package com.psut.pool.Models;
 
-import android.os.Build;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +25,9 @@ public class Trip {
 
     public Map<String, Object> toFullTripMap() {
         HashMap<String, Object> fullTrip = new HashMap<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fullTrip.forEach(toTripMap()::putIfAbsent);
-            fullTrip.forEach(ride.toFullRideMap()::putIfAbsent);
-            fullTrip.forEach(user.toUserMap()::putIfAbsent);
-        }
+        fullTrip.putAll(toTripMap());
+        fullTrip.putAll(ride.toFullRideMap());
+        fullTrip.putAll(user.toUserMap());
         return fullTrip;
     }
 }
