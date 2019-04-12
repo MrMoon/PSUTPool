@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements Layout {
     }
 
     private String isDriver() {
-        databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .child(Constants.DATABASE_IS_DRIVER)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -37,9 +39,7 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,6 +52,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,6 +71,7 @@ import com.psut.pool.Shared.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -75,6 +80,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     //Global Variables and Objects:
     private View view;
     private Button btnRoute;
+    private RelativeLayout relativeLayout;
     private GoogleMap map;
     private Location currentLocation;
     private DatabaseReference databaseReference;
@@ -85,20 +91,22 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private Double latitude, longitude;
     private int i = 0;
     private boolean isPermissionGranted;
-    private PlaceAutocompleteFragment placeAutoComplete;
 
     @SuppressLint("InflateParams")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //view = inflater.inflate(R.layout.fragment_captain_tab, null);
         view = inflater.inflate(R.layout.fragment_captain_tab, container, false);
 
         //Objects:
+        relativeLayout = view.findViewById(R.id.revLayoutMainCaptainFrag);
         btnRoute = view.findViewById(R.id.btnRouteFragMain);
         markerPoints = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.DATABASE_USERS);
+        if (!Places.isInitialized()) {
+            Places.initialize(Objects.requireNonNull(getActivity()).getApplicationContext(), apiKey);
+        }
 
         //Starting the map setup:
         getLocationPermission();
@@ -142,18 +150,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(Objects.requireNonNull(getActivity()).getApplicationContext(), data);
-                moveCamera(place.getLatLng());
-            } else {
-                System.out.println(PlaceAutocomplete.getStatus(Objects.requireNonNull(getActivity()).getApplicationContext(), data));
-            }
-        }
-    }
-
     private void intitMap() {   //Assigning map to the fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragmentMap);
@@ -175,8 +171,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             map = googleMap;
             getLocation();
 
-            currentLocationButton();
             setupMapSettings(map);
+            currentLocationButton();
+            setupAutoCompleteSearch();
 
             //Markers:
             map.setOnMapClickListener(latLng -> setupMarkers(map, latLng));
@@ -185,10 +182,54 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    private void setupAutoCompleteSearch() {
+        relativeLayout.setOnClickListener(v -> {
+            // Set the fields to specify which types of place data to return.
+            List<com.google.android.libraries.places.api.model.Place.Field> fields = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID,
+                    com.google.android.libraries.places.api.model.Place.Field.NAME);
+
+            // Start the autocomplete intent.
+            Intent intent = new Autocomplete.IntentBuilder(
+                    AutocompleteActivityMode.FULLSCREEN, fields).setCountry("jo")
+                    .build(Objects.requireNonNull(getActivity()).getApplicationContext());
+            startActivityForResult(intent, Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE);
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                System.out.println(place.getName());
+                geoLocation(place.getName());
+            } else {
+                System.out.println(PlaceAutocomplete.getStatus(Objects.requireNonNull(getActivity()).getApplicationContext(), data));
+            }
+        }
+    }
+
+
+    //Search Results:
+    private void geoLocation(String s) {
+        Geocoder geocoder = new Geocoder(getActivity());
+        List<Address> addresses = new ArrayList<>();
+        try {
+            addresses = (geocoder.getFromLocationName(s, 1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (!(addresses.isEmpty())) {
+            Address address = addresses.get(0);
+            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()));
+        }
+    }
+
     private void currentLocationButton() {
         View locationButton = ((View) view.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParams.setMargins(0, 180, 180, 0);
@@ -197,9 +238,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     @SuppressLint("MissingPermission")
     private void setupMapSettings(GoogleMap googleMap) {
         map = googleMap;
-        //map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         map.setMyLocationEnabled(true);
-
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setBuildingsEnabled(true);
         map.setIndoorEnabled(false);
@@ -328,6 +367,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         list.add(lng);
 
         addMarkertoMap(googleMap, lng, title);
+        btnRoute.setVisibility(View.VISIBLE);
     }
 
     private void addMarkertoMap(GoogleMap googleMap, LatLng latLng, String title) {
@@ -430,6 +470,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             }
         });
+
     }
 
     private Float getCost(String d0, String d1) {

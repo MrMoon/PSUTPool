@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <fragment
         android:id="@+id/fragmentMap"
@@ -9,11 +11,39 @@
         android:layout_width="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/revLayoutMainCaptainFrag"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/button_shape_corners_white"
+        android:elevation="10dp">
+
+        <ImageView
+            android:id="@+id/imgSearchCaptainFrag"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_search_blue_24dp"
+            tools:ignore="ContentDescription" />
+
+    </RelativeLayout>
+
     <Button
         android:id="@+id/btnRouteFragMain"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fragmentMap"
-        android:layout_marginBottom="30sp"
-        android:text="@string/start" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="30sp"
+        android:background="@drawable/button_shape_corners"
+        android:text="@string/start"
+        android:textAllCaps="false"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:visibility="gone" />
 </RelativeLayout>
