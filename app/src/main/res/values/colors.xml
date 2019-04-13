@@ -5,5 +5,8 @@
     <color name="colorAccent">#113E56</color>
     <color name="background">#14355e</color>
     <color name="white">#fff</color>
+    <color name="graylight">#BEBEBE</color>
+    <color name="startblue">#8B96A2</color>
     <color name="trans">#00000000</color>
+    <color name="color2">#113E56</color>
 </resources>

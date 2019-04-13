@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.wolfsoft.kcab.Login_icab">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80.2dp"
+            android:src="@drawable/ic_car2" />
+
+        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Welcome Back!"
+            android:textColor="#323643"
+            android:textSize="21.3sp" />
+
+        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="9.6dp"
+            android:text="Login to continue using iCab"
+            android:textColor="#606470"
+            android:textSize="15.4sp" />
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="28.7dp"
+            android:layout_marginTop="123.1dp"
+            android:layout_marginRight="28.9dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="1dp">
+
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:src="@drawable/mail" />
+
+                <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="#00000000"
+                    android:hint="Email"
+                    android:textColorHint="#000000" />
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="28.7dp"
+            android:layout_marginTop="19.2dp"
+            android:layout_marginRight="28.9dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="1dp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:src="@drawable/lock" />
+
+                <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="#00000000"
+                    android:hint="Password"
+                    android:textColorHint="#000000" />
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="19.2dp"
+            android:layout_marginRight="28.9dp"
+            android:text="Forgot password?"
+            android:textColor="#606470"
+            android:textSize="15.4sp" />
+
+
+        <com.psut.pool.customfonts.MyTextView_Roboto_Regular
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="28.7dp"
+            android:layout_marginTop="40.2dp"
+            android:layout_marginRight="28.9dp"
+            android:background="@drawable/rect_blue"
+            android:gravity="center"
+            android:text="Log In"
+            android:textColor="#fbfbfb"
+            android:textSize="15.4sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Light
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="New User?"
+            android:textColor="#606470"
+            android:textSize="15.4dp" />
+
+        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:text="Sign up for a new account"
+            android:textColor="#3277d8"
+            android:textSize="15.4sp" />
+
+    </LinearLayout>
+</RelativeLayout>

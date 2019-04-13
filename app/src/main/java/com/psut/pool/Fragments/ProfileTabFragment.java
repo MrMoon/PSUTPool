@@ -20,8 +20,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.psut.pool.Activities.HistoryActivity;
 import com.psut.pool.Activities.PersonalInfoActivity;
 import com.psut.pool.Activities.StartActivity;
+import com.psut.pool.Activities.WalletActivity;
 import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
 import com.psut.pool.Models.User;
@@ -68,14 +70,14 @@ public class ProfileTabFragment extends Fragment implements Layout {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     String driver = Objects.requireNonNull(dataSnapshot.getValue()).toString();
-                                    if (driver.equalsIgnoreCase("false")) {
+                                    if (driver.equalsIgnoreCase(Constants.FALSE)) {
                                         isDriver = false;
                                         switchIsDriving.setVisibility(View.GONE);
                                         txtStartDriving.setVisibility(View.GONE);
                                     } else {
                                         isDriver = true;
-                                        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Welcome Drive :)", Toast.LENGTH_SHORT).show();
                                         switchIsDriving.setVisibility(View.VISIBLE);
+                                        switchIsDriving.setOnCheckedChangeListener((buttonView, isChecked) -> databaseReference.child(Constants.DRIVER_DRIVING).setValue(Boolean.toString(isChecked)));
                                         txtStartDriving.setVisibility(View.VISIBLE);
                                     }
                                 }
@@ -110,7 +112,6 @@ public class ProfileTabFragment extends Fragment implements Layout {
         txtWallet = view.findViewById(R.id.txtWalletProfileFrag);
         txtLogOut = view.findViewById(R.id.txtLogOutProfileFrag);
         switchIsDriving = view.findViewById(R.id.switchStartDrivingProfileFrag);
-        switchIsDriving.setOnCheckedChangeListener((buttonView, isChecked) -> isDriving = isChecked);
     }
 
     @Override
@@ -130,31 +131,46 @@ public class ProfileTabFragment extends Fragment implements Layout {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.txtLogOutProfileFrag:
-                //Check User type:
-                if (isDriver) {
-                    user = new Driver("Offline");
-                } else {
-                    user = new Customer("Offline");
-                }
-                //Writing status to database:
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                databaseReference.child(Constants.DATABASE_USERS)
-                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                        .updateChildren(user.toOfflineMap());
-                //Signing out:
-                FirebaseAuth.getInstance().signOut();
-                //Exiting app:
-                Intent startActivityIntent = new Intent(getActivity(), StartActivity.class);
-                startActivity(startActivityIntent);
-                Objects.requireNonNull(getActivity()).finish();
+                logout();
                 break;
 
             case R.id.txtPersonalInfoProfileFrag:
-                Intent personalInfoIntent = new Intent(getActivity(), PersonalInfoActivity.class);
-                startActivity(personalInfoIntent);
+                updateUI(PersonalInfoActivity.class);
                 break;
 
+            case R.id.txtMyRidesProfileFrag:
+                updateUI(HistoryActivity.class);
+                break;
+
+            case R.id.txtWalletProfileFrag:
+                updateUI(WalletActivity.class);
+                break;
         }
 
+    }
+
+    private void updateUI(Class<?> aClass) {
+        Intent intent = new Intent(Objects.requireNonNull(getActivity()).getApplicationContext(), aClass);
+        startActivity(intent);
+    }
+
+    private void logout() {
+        //Check User type:
+        if (isDriver) {
+            user = new Driver(Constants.STATUS_USER_OFFLINE);
+        } else {
+            user = new Customer(Constants.STATUS_USER_OFFLINE);
+        }
+        //Writing status to database:
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child(Constants.DATABASE_USERS)
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .updateChildren(user.toOfflineMap());
+        //Signing out:
+        FirebaseAuth.getInstance().signOut();
+        //Exiting app:
+        Intent startActivityIntent = new Intent(getActivity(), StartActivity.class);
+        startActivity(startActivityIntent);
+        Objects.requireNonNull(getActivity()).finish();
     }
 }

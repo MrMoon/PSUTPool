@@ -2,6 +2,8 @@ package com.psut.pool.Shared;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +24,8 @@ public class Constants {
     public static final Integer ERROR_DIALOG_REQUEST = 9001;
     public static final Integer LOCATION_PERMISSION_REQUEST_CODE = 9002;
     public static final Integer LOCATION_AUTO_COMPLETE_REQUEST_CODE = 1010;
-
+    public static final String COUNTRY_ID = "jo";
+    public static final String API_KEY = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w";
     //Maps:
     public static final Float DEFAULT_ZOOM = 15f;
 
@@ -32,6 +35,19 @@ public class Constants {
     public static final String NEAREST_DRIVER = "Nearest Driver";
     public static final String DESTINATION = "Destination";
     public static final String CONFIRM_RIDE = "Confirm Ride";
+    public static final String YOU_ARE_HERE = "You're Here";
+    public static final String JUST_A_MIN = "Just a Moment";
+    public static final String TRUE = Boolean.valueOf(true).toString();
+    public static final String FALSE = Boolean.valueOf(false).toString();
+    public static final String COST_WILL_BE = "Cost Will Be = ";
+    public static final String JD = " JD";
+    public static final String NO_ROUTE_EXIST = "No routes exist";
+    public static final String STATUS_DRIVING_MOVING = "Moving";
+    public static final String STATUS_DRIVING_STARTING = "Starting";
+    public static final String STATUS_DRIVING_WAITING = "Waiting";
+    public static final String DRIVER_DRIVING = "Driving";
+    public static final String STATUS_USER_OFFLINE = "Offline";
+    public static final String STATUS_USER_ONILINE = "Online";
 
     //Database:
     public static final String DATABASE_USERS = "Users";
@@ -93,6 +109,10 @@ public class Constants {
         restrict.add(UNI_MAP_RESTRICT2);
         restrict.add(UNI_MAP_RESTRICT3);
         return restrict;
+    }
+
+    public static String description(String oirgin, String dest) {
+        return "Ride From : " + oirgin + " to " + dest + " at " + DateTime.now().toString();
     }
 
 }

@@ -23,6 +23,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,8 +75,6 @@ import com.psut.pool.Models.User;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -90,14 +89,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private Button btnRoute;
     private Dialog dialog;
     private User user;
-    private RelativeLayout relativeLayout;
+    private CardView cardView;
     private GoogleMap map;
     private Location currentLocation;
     private DatabaseReference databaseReference;
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
     private String[] permissions;
-    private String distance, duration, apiKey = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w", lat, lon, id;
+    private String distance, duration, apiKey = Constants.API_KEY, id;
     private Double latitude, longitude;
     private float tripCost;
     private int i = 0;
@@ -110,7 +109,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         view = inflater.inflate(R.layout.fragment_captain_tab, container, false);
 
         //Objects:
-        relativeLayout = view.findViewById(R.id.revLayoutMainCaptainFrag);
+        cardView = view.findViewById(R.id.cardViewSearchMainFrag);
         btnRoute = view.findViewById(R.id.btnRouteFragMain);
         markerPoints = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference()
@@ -194,14 +193,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupAutoCompleteSearch() {
-        relativeLayout.setOnClickListener(v -> {
+        cardView.setOnClickListener(v -> {
             // Set the fields to specify which types of place data to return.
             List<com.google.android.libraries.places.api.model.Place.Field> fields = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID,
                     com.google.android.libraries.places.api.model.Place.Field.NAME);
 
             // Start the autocomplete intent.
             Intent intent = new Autocomplete.IntentBuilder(
-                    AutocompleteActivityMode.FULLSCREEN, fields).setCountry("jo")
+                    AutocompleteActivityMode.FULLSCREEN, fields).setCountry(Constants.COUNTRY_ID)
                     .build(Objects.requireNonNull(getActivity()).getApplicationContext());
             startActivityForResult(intent, Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE);
         });
@@ -310,7 +309,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     private void writeUserData(DatabaseReference reference) {
         String isDriver = MainActivity.getIsDriver();
-        if (isDriver.equalsIgnoreCase("true")) {
+        if (isDriver.equalsIgnoreCase(Constants.TRUE)) {
             user = new Driver();
             user.setCurruntLatitude(latitude.toString());
             user.setCurruntLongitude(longitude.toString());
@@ -337,7 +336,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setupMarkers(GoogleMap googleMap, LatLng latLng) {
-        addPrimaryMarker(googleMap, markerPoints, latLng, Constants.DESTINATION);
+        addPrimaryMarker(googleMap, markerPoints, latLng);
 
         //Markers Set:
         try {
@@ -354,7 +353,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 
             MarkerOptions startLocation = new MarkerOptions().position(currentLatLng)
-                    .title("You're Here")
+                    .title(Constants.YOU_ARE_HERE)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             map.addMarker(startLocation);
             map.addMarker(endLocation);
@@ -362,12 +361,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, Constants.DEFAULT_ZOOM - 0.5f));
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Just a min", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), Constants.JUST_A_MIN, Toast.LENGTH_SHORT).show();
             resetFragment();
         }
     }
 
-    private void addPrimaryMarker(GoogleMap googleMap, ArrayList<LatLng> list, LatLng lng, String title) {
+    private void addPrimaryMarker(GoogleMap googleMap, ArrayList<LatLng> list, LatLng lng) {
         //Checking if there is no marker on the map:
         if (list.size() > 1) {
             list.clear();
@@ -377,7 +376,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         //Adding new item to the list:
         list.add(lng);
 
-        addMarkertoMap(googleMap, lng, title);
+        addMarkertoMap(googleMap, lng, Constants.DESTINATION);
         btnRoute.setVisibility(View.VISIBLE);
     }
 
@@ -410,7 +409,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
                                 //Cost:
                                 System.out.println("Cost Will be = " + String.format("%.2f", getCost(duration, distance)));
-                                Snackbar snackbar = Snackbar.make(view, "Cost Will Be = " + String.format("%.2f", getCost(duration, distance)) + " JD", Snackbar.LENGTH_LONG);
+                                Snackbar snackbar = Snackbar.make(view, Constants.COST_WILL_BE + String.format("%.2f", getCost(duration, distance)) + Constants.JD, Snackbar.LENGTH_LONG);
                                 tripCost = getCost(duration, distance);
                                 snackbar.show();
 
@@ -438,7 +437,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
                                 break;
                             case RequestResult.NOT_FOUND:
-                                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "No routes exist", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), Constants.NO_ROUTE_EXIST, Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "No", Toast.LENGTH_SHORT).show();
@@ -466,11 +465,10 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         //Getting the requirement:
         float result[] = new float[1];
         Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, destination.latitude, destination.longitude, result);
-        String discription = "Ride from " + currentLatLng.toString() + " to " + destination.toString() + " at " + DateTime.now().toString();
 
         //Setting up the Objects:
-        TripRoute tripRoute = new TripRoute(currentLatLng.toString(), destination.toString(), String.valueOf(result[0]), "Moving");
-        Ride ride = new Ride(discription, String.valueOf(tripCost), tripRoute);
+        TripRoute tripRoute = new TripRoute(currentLatLng.toString(), destination.toString(), String.valueOf(result[0]), Constants.STATUS_DRIVING_MOVING);
+        Ride ride = new Ride(Constants.description(currentLatLng.toString(), destination.toString()), String.valueOf(tripCost), tripRoute);
         Trip trip = new Trip(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), "", user, ride);
 
         //writing to the database:
@@ -510,12 +508,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private Float getCost(String d0, String d1) {
-        //distance(d1) , duration (d0):
-        d0 = d0.substring(0, d0.indexOf(" "));
-        d1 = d1.substring(0, d1.indexOf(" "));
-
-        float dur = Float.valueOf(d0);
-        float dis = Float.valueOf(d1);
+        float dur = Float.valueOf(d0.substring(0, d0.indexOf(" ")));
+        float dis = Float.valueOf(d1.substring(0, d1.indexOf(" ")));
         System.out.println("Distance = " + dis);
         System.out.println("Duration = " + dur);
 

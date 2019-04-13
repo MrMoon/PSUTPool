@@ -25,7 +25,7 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
 
     //Global Variables and Objects:
     private ImageView imgBackArrow;
-    private TextView txtBack, txtName, txtId, txtNumber;
+    private TextView txtName, txtId, txtNumber, txtEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +35,16 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
 
         layoutComponents();
 
-        txtBack.setOnClickListener(this);
         imgBackArrow.setOnClickListener(this);
     }
 
     @Override
     public void layoutComponents() {
         imgBackArrow = findViewById(R.id.imgBackArrowPersonalInfo);
-        txtBack = findViewById(R.id.txtBackPersonalInfo);
         txtName = findViewById(R.id.txtNamePersonalInfo);
         txtId = findViewById(R.id.txtIDPersonalInfo);
         txtNumber = findViewById(R.id.txtNumberPersonalInfo);
+        txtEmail = findViewById(R.id.txtEmailPersonalInfo);
         getLayoutComponents();
     }
 
@@ -69,8 +68,9 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                txtName.setText(Constants.DATABASE_NAME + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_NAME).getValue()).toString());
-                                txtId.setText(Constants.DATABASE_UNI_ID + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_UNI_ID).getValue()).toString());
+                                txtName.setText(Constants.DATABASE_NAME + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_NAME).getValue()).toString());
+                                txtId.setText(Constants.DATABASE_UNI_ID + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_UNI_ID).getValue()).toString());
+                                txtEmail.setText(Constants.DATABASE_EMAIL + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_EMAIL).getValue()).toString());
                                 txtNumber.setText(Constants.DATABASE_PHONE_NUMBER + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_PHONE_NUMBER).getValue()).toString());
                             }
                         }
@@ -93,9 +93,6 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.txtBackPersonalInfo:
-                finish();
-                break;
             case R.id.imgBackArrowPersonalInfo:
                 finish();
                 break;
