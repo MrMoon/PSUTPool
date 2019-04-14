@@ -10,6 +10,18 @@ public class History {
     private String date, time;
     private Trip trip;
 
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public Trip getTrip() {
+        return trip;
+    }
+
     public History(String date, String time, Trip trip) {
         this.date = date;
         this.time = time;

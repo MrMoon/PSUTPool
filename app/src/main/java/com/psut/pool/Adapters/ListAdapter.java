@@ -16,7 +16,6 @@ import com.wolfsoft.kcab.Home_icab;
 import com.wolfsoft.kcab.In_Ride_icab;
 import com.wolfsoft.kcab.Login_icab;
 import com.wolfsoft.kcab.Menu_icab1;
-import com.wolfsoft.kcab.Ride_History_iCab;
 import com.wolfsoft.kcab.Ride_complete_rating_icab;
 import com.wolfsoft.kcab.Sign_Up_icab;
 
@@ -71,8 +70,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                     context.startActivity(i);
                 }
                 if (position == 6) {
-                    Intent i = new Intent(context, Ride_History_iCab.class);
-                    context.startActivity(i);
+                    //Intent i = new Intent(context, Ride_History_iCab.class);
+                    //context.startActivity(i);
                 }
                 if (position == 7) {
                     Intent i = new Intent(context, Menu_icab1.class);

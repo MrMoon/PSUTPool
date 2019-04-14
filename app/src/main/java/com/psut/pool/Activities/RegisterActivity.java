@@ -1,7 +1,9 @@
 package com.psut.pool.Activities;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -59,6 +61,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         btnSignUp.setOnClickListener(v -> registerUser());
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     private void registerUser() {
         if (isValid()) {
             //User Object:

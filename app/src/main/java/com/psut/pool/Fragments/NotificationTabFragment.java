@@ -51,5 +51,6 @@ public class NotificationTabFragment extends Fragment {
 
     private void setupAdapter() {
         notifications.add(new Notifications(Constants.WELCOME));
+        notifications.add(new Notifications(Constants.STATUS_DRIVING_MOVING));
     }
 }

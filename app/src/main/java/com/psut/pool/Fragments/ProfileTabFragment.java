@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.psut.pool.Activities.ContactUsActivity;
 import com.psut.pool.Activities.HistoryActivity;
 import com.psut.pool.Activities.PersonalInfoActivity;
 import com.psut.pool.Activities.StartActivity;
@@ -37,7 +38,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
 
     //Global Variables and Objects:
     private View view;
-    private TextView txtPersonalInfo, txtMyRides, txtWallet, txtLogOut, txtStartDriving;
+    private TextView txtPersonalInfo, txtMyRides, txtWallet, txtLogOut, txtStartDriving, txtContactUs;
     private Switch switchIsDriving;
     private User user;
     private String uid;
@@ -77,7 +78,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
                                     } else {
                                         isDriver = true;
                                         switchIsDriving.setVisibility(View.VISIBLE);
-                                        switchIsDriving.setOnCheckedChangeListener((buttonView, isChecked) -> databaseReference.child(Constants.DRIVER_DRIVING).setValue(Boolean.toString(isChecked)));
+                                        switchIsDriving.setOnCheckedChangeListener((buttonView, isChecked) -> databaseReference.child(Constants.DATABASE_USERS).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DRIVER_DRIVING).setValue(Boolean.toString(isChecked)));
                                         txtStartDriving.setVisibility(View.VISIBLE);
                                     }
                                 }
@@ -112,6 +113,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
         txtWallet = view.findViewById(R.id.txtWalletProfileFrag);
         txtLogOut = view.findViewById(R.id.txtLogOutProfileFrag);
         switchIsDriving = view.findViewById(R.id.switchStartDrivingProfileFrag);
+        txtContactUs = view.findViewById(R.id.txtContactUsProfileFrag);
     }
 
     @Override
@@ -125,6 +127,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
         txtPersonalInfo.setOnClickListener(this);
         txtWallet.setOnClickListener(this);
         txtMyRides.setOnClickListener(this);
+        txtContactUs.setOnClickListener(this);
     }
 
     @Override
@@ -144,6 +147,10 @@ public class ProfileTabFragment extends Fragment implements Layout {
 
             case R.id.txtWalletProfileFrag:
                 updateUI(WalletActivity.class);
+                break;
+
+            case R.id.txtContactUsProfileFrag:
+                updateUI(ContactUsActivity.class);
                 break;
         }
 

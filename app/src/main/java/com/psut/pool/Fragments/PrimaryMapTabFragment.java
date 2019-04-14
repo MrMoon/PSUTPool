@@ -65,9 +65,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.psut.pool.Activities.MainActivity;
-import com.psut.pool.Models.Customer;
-import com.psut.pool.Models.Driver;
 import com.psut.pool.Models.Ride;
 import com.psut.pool.Models.Trip;
 import com.psut.pool.Models.TripRoute;
@@ -96,7 +93,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
     private String[] permissions;
-    private String distance, duration, apiKey = Constants.API_KEY, id;
+    private String distance, duration, apiKey = Constants.API_KEY, id, keyTrip = "0";
     private Double latitude, longitude;
     private float tripCost;
     private int i = 0;
@@ -109,6 +106,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         view = inflater.inflate(R.layout.fragment_captain_tab, container, false);
 
         //Objects:
+        dialog = new Dialog(Objects.requireNonNull(getActivity()).getApplicationContext());
         cardView = view.findViewById(R.id.cardViewSearchMainFrag);
         btnRoute = view.findViewById(R.id.btnRouteFragMain);
         markerPoints = new ArrayList<>();
@@ -308,18 +306,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void writeUserData(DatabaseReference reference) {
-        String isDriver = MainActivity.getIsDriver();
-        if (isDriver.equalsIgnoreCase(Constants.TRUE)) {
-            user = new Driver();
-            user.setCurruntLatitude(latitude.toString());
-            user.setCurruntLongitude(longitude.toString());
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
-        } else {
-            user = new Customer();
-            user.setCurruntLatitude(latitude.toString());
-            user.setCurruntLongitude(longitude.toString());
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(user.toUserLocationMap());
-        }
+        user.setCurruntLatitude(latitude.toString());
+        user.setCurruntLongitude(longitude.toString());
+        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
     }
 
     private void resetFragment() {   //Fragment refresh
@@ -435,6 +424,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
                                 map.animateCamera(cu);
 
+                                writeTripData(databaseReference);
                                 break;
                             case RequestResult.NOT_FOUND:
                                 Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), Constants.NO_ROUTE_EXIST, Toast.LENGTH_SHORT).show();
@@ -451,6 +441,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 });
     }
 
+    //Dialog doesn't work in a fragment ^_^
     private void setupDialog() {    //Setting up the dialog
         dialog.setContentView(R.layout.layout_pop_up);
         TextView textView = dialog.findViewById(R.id.txtNumberLayoutPopUp);
@@ -470,7 +461,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         TripRoute tripRoute = new TripRoute(currentLatLng.toString(), destination.toString(), String.valueOf(result[0]), Constants.STATUS_DRIVING_MOVING);
         Ride ride = new Ride(Constants.description(currentLatLng.toString(), destination.toString()), String.valueOf(tripCost), tripRoute);
         Trip trip = new Trip(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), "", user, ride);
-
         //writing to the database:
         reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(Constants.DATABASE_TRIP).updateChildren(trip.toFullTripMap());
     }

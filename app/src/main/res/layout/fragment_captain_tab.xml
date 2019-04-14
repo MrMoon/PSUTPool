@@ -46,5 +46,5 @@
         android:textAllCaps="false"
         android:textColor="#fff"
         android:textSize="25sp"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </RelativeLayout>

@@ -54,7 +54,7 @@
                 android:layout_marginTop="15.4dp"
                 android:orientation="vertical">
 
-                <customfonts.MyTextView_Roboto_Regular
+                <TextView
                     android:id="@+id/txtmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                     android:textColor="#323643"
                     android:textSize="13.4sp" />
 
-                <customfonts.MyTextView_Roboto_Regular
+                <TextView
                     android:id="@+id/txthome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <customfonts.MyTextView_Roboto_Regular
+                <TextView
                     android:id="@+id/txtdate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                     android:rating="3"
                     android:stepSize="0.2" />
 
-                <customfonts.MyTextView_Roboto_Regular
+                <TextView
                     android:id="@+id/txtprice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -8,6 +8,22 @@ public class TripRoute {
     //Global Variables and Objects:
     private String pickUpLocation, dropOffLocation, distance, status;
 
+    public String getPickUpLocation() {
+        return pickUpLocation;
+    }
+
+    public String getDropOffLocation() {
+        return dropOffLocation;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
     public TripRoute(String pickUpLocation, String dropOffLocation, String distance, String status) {
         this.pickUpLocation = pickUpLocation;
         this.dropOffLocation = dropOffLocation;

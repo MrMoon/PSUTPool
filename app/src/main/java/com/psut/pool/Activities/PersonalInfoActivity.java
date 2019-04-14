@@ -68,9 +68,9 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                txtName.setText(Constants.DATABASE_NAME + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_NAME).getValue()).toString());
-                                txtId.setText(Constants.DATABASE_UNI_ID + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_UNI_ID).getValue()).toString());
-                                txtEmail.setText(Constants.DATABASE_EMAIL + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_EMAIL).getValue()).toString());
+                                txtName.setText(Constants.DATABASE_NAME + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_NAME).getValue()).toString());
+                                txtId.setText(Constants.DATABASE_UNI_ID + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_UNI_ID).getValue()).toString());
+                                txtEmail.setText(Constants.DATABASE_EMAIL + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_EMAIL).getValue()).toString());
                                 txtNumber.setText(Constants.DATABASE_PHONE_NUMBER + ": " + Objects.requireNonNull(dataSnapshot.child(Constants.DATABASE_PHONE_NUMBER).getValue()).toString());
                             }
                         }

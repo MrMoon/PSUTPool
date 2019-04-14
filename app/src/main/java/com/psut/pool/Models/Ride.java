@@ -9,6 +9,18 @@ public class Ride {
     private String description, amount;
     private TripRoute tripRoute;
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public TripRoute getTripRoute() {
+        return tripRoute;
+    }
+
     public Ride(String description, String amount, TripRoute tripRoute) {
         this.description = description;
         this.amount = amount;

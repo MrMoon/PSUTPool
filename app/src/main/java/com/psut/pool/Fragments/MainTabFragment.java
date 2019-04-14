@@ -19,6 +19,7 @@ import com.psut.pool.Shared.Constants;
 
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
 public class MainTabFragment extends Fragment {
 
     private Fragment fragmentMainTab, fragmentUniMap, fragmentPublicMap;

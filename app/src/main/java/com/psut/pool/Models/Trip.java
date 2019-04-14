@@ -9,6 +9,22 @@ public class Trip {
     private User user;
     private Ride ride;
 
+    public String getId() {
+        return id;
+    }
+
+    public String getTripRank() {
+        return tripRank;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Ride getRide() {
+        return ride;
+    }
+
     public Trip(String id, String tripRank, User user, Ride ride) {
         this.id = id;
         this.tripRank = tripRank;

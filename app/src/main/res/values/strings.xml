@@ -62,8 +62,8 @@
     <string name="call">Call</string>
     <string name="add_to_group">Add to Group</string>
     <string name="rate">Rate</string>
-    <string name="ride_history">Ride History</string>
     <string name="showing_recent_rides">Showing Recent Rides</string>
+    <string name="ride_history">Ride History</string>
     <string-array name="Spn">
         <item>@string/Anyone</item>
         <item>@string/female</item>
