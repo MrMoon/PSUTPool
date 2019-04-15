@@ -65,6 +65,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.psut.pool.Activities.MainActivity;
+import com.psut.pool.Models.Customer;
+import com.psut.pool.Models.Driver;
 import com.psut.pool.Models.Ride;
 import com.psut.pool.Models.Trip;
 import com.psut.pool.Models.TripRoute;
@@ -306,9 +309,18 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void writeUserData(DatabaseReference reference) {
-        user.setCurruntLatitude(latitude.toString());
-        user.setCurruntLongitude(longitude.toString());
-        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
+        String isDriver = MainActivity.getIsDriver();
+        if (isDriver.equalsIgnoreCase(Constants.TRUE)) {
+            user = new Driver();
+            user.setCurruntLatitude(latitude.toString());
+            user.setCurruntLongitude(longitude.toString());
+            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
+        } else {
+            user = new Customer();
+            user.setCurruntLatitude(latitude.toString());
+            user.setCurruntLongitude(longitude.toString());
+            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
+        }
     }
 
     private void resetFragment() {   //Fragment refresh
