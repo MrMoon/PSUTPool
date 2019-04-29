@@ -2,13 +2,15 @@ package com.psut.pool.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,12 +26,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -49,6 +51,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -60,6 +63,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,19 +72,42 @@ import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.Activities.MainActivity;
 import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
+import com.psut.pool.Models.RequestRide;
 import com.psut.pool.Models.Ride;
 import com.psut.pool.Models.Trip;
 import com.psut.pool.Models.TripRoute;
 import com.psut.pool.Models.User;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
+import com.psut.pool.Shared.Online;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_GREEN;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
+import static com.psut.pool.R.drawable.ic_directions_car_black_24dp;
+import static com.psut.pool.Shared.Constants.DATABASE_IS_DRIVER;
+import static com.psut.pool.Shared.Constants.DATABASE_NAME;
+import static com.psut.pool.Shared.Constants.DATABASE_PHONE_NUMBER;
+import static com.psut.pool.Shared.Constants.DATABASE_REQUEST;
+import static com.psut.pool.Shared.Constants.DATABASE_TRIP;
+import static com.psut.pool.Shared.Constants.DATABASE_USER_CURRENT_LOCATION;
+import static com.psut.pool.Shared.Constants.DATABASE_USER_STATUS;
+import static com.psut.pool.Shared.Constants.DESTINATION;
+import static com.psut.pool.Shared.Constants.STATUS_DRIVING_MOVING;
+import static com.psut.pool.Shared.Constants.STATUS_USER_OFFLINE;
+import static com.psut.pool.Shared.Constants.STATUS_USER_ONILINE;
+import static com.psut.pool.Shared.Constants.TRUE;
+import static com.psut.pool.Shared.Constants.WENT_WRONG;
+import static com.psut.pool.Shared.Constants.YOU_ARE_HERE;
 
 public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallback {
 
@@ -95,8 +122,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private DatabaseReference databaseReference;
     private LatLng destination, currentLatLng;
     private ArrayList<LatLng> markerPoints;
+    private ArrayList<String> names;
     private String[] permissions;
-    private String distance, duration, apiKey = Constants.API_KEY, id, keyTrip = "0";
+    private String distance, duration, apiKey = Constants.API_KEY, id, keyTrip = "0", phoneNumber, driverID;
     private Double latitude, longitude;
     private float tripCost;
     private int i = 0;
@@ -113,15 +141,48 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         cardView = view.findViewById(R.id.cardViewSearchMainFrag);
         btnRoute = view.findViewById(R.id.btnRouteFragMain);
         markerPoints = new ArrayList<>();
-        databaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(Constants.DATABASE_USERS);
+        names = new ArrayList<>();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
         if (!Places.isInitialized()) {
             Places.initialize(Objects.requireNonNull(getActivity()).getApplicationContext(), apiKey);
         }
-
+        isOnline(FirebaseAuth.getInstance().getCurrentUser());
         //Starting the map setup:
         getLocationPermission();
         return view;
+    }
+
+    @Override
+    public void onAttachFragment(Fragment childFragment) {
+        super.onAttachFragment(childFragment);
+        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Attached", Toast.LENGTH_SHORT).show();
+        if (map != null) {
+            map.clear();
+        }
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && databaseReference != null) {
+            checkRequest(databaseReference);
+        }
+    }
+
+    private void checkRequest(DatabaseReference reference) {
+        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (Objects.requireNonNull(dataSnapshot.child(DATABASE_REQUEST).getValue()).toString().equalsIgnoreCase(TRUE)) {
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Customer is waiting for you!!", Toast.LENGTH_SHORT).show();
+                    startTrip(databaseReference);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void startTrip(DatabaseReference reference) {
+
     }
 
     private void getLocationPermission() {  //Getting Permissions from the user
@@ -188,10 +249,20 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             //Markers:
             map.setOnMapClickListener(latLng -> setupMarkers(map, latLng));
-
+            checkRequest(databaseReference);
             btnRoute.setOnClickListener(v -> getDestinationInfo(map, destination, currentLatLng, apiKey));
         }
     }
+
+
+    private void isOnline(FirebaseUser currentUser) {
+        if (Online.isOnline(Objects.requireNonNull(getActivity()).getApplicationContext(), getActivity().getApplicationContext().getPackageName())) {
+            databaseReference.child(currentUser.getUid()).child(DATABASE_USER_STATUS).setValue(STATUS_USER_ONILINE);
+        } else {
+            databaseReference.child(currentUser.getUid()).child(DATABASE_USER_STATUS).setValue(STATUS_USER_OFFLINE);
+        }
+    }
+
 
     private void setupAutoCompleteSearch() {
         cardView.setOnClickListener(v -> {
@@ -253,7 +324,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setBuildingsEnabled(true);
         map.setIndoorEnabled(false);
-        map.setTrafficEnabled(true);
+        map.setTrafficEnabled(false);
         UiSettings uiSettings = map.getUiSettings();
         uiSettings.setMyLocationButtonEnabled(true);
         uiSettings.setScrollGesturesEnabled(true);
@@ -351,11 +422,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             markerPoints.add(currentLatLng);
 
             MarkerOptions endLocation = new MarkerOptions().position(destination)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    .icon(BitmapDescriptorFactory.defaultMarker(HUE_RED));
 
             MarkerOptions startLocation = new MarkerOptions().position(currentLatLng)
-                    .title(Constants.YOU_ARE_HERE)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    .title(YOU_ARE_HERE)
+                    .icon(BitmapDescriptorFactory.defaultMarker(HUE_GREEN));
             map.addMarker(startLocation);
             map.addMarker(endLocation);
 
@@ -367,7 +438,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    private void addPrimaryMarker(GoogleMap googleMap, ArrayList<LatLng> list, LatLng lng) {
+    private void addPrimaryMarker(GoogleMap googleMap, @NotNull ArrayList<LatLng> list, LatLng lng) {
         //Checking if there is no marker on the map:
         if (list.size() > 1) {
             list.clear();
@@ -377,17 +448,17 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         //Adding new item to the list:
         list.add(lng);
 
-        addMarkertoMap(googleMap, lng, Constants.DESTINATION);
+        addMarkertoMap(googleMap, lng, BitmapDescriptorFactory.defaultMarker(HUE_GREEN), DESTINATION);
         btnRoute.setVisibility(View.VISIBLE);
     }
 
-    private void addMarkertoMap(GoogleMap googleMap, LatLng latLng, String title) {
+    private void addMarkertoMap(@NotNull GoogleMap googleMap, LatLng latLng, BitmapDescriptor bitmapDescriptor, String title) {
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        markerOptions.position(latLng).title(title).icon(bitmapDescriptor);
         googleMap.addMarker(markerOptions);
     }
 
-    private void getDestinationInfo(GoogleMap googleMap, LatLng destination, LatLng origin, String serverKey) {
+    private void getDestinationInfo(@NotNull GoogleMap googleMap, LatLng destination, LatLng origin, String serverKey) {
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
                 .to(destination)
@@ -432,8 +503,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
                                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-                                getNearestDriver(databaseReference, currentLatLng);
-
+                                //Nearest Drivers:
+                                //HashMap<HashMap<String, Object>, LinkedHashMap<LatLng, Float>> nearestDrivers = new HashMap<>(getNearestDrivers(databaseReference));
+                                HashMap<String, Object> nearestDrivers = new HashMap<>(getNearestDrivers(databaseReference));
+                                //setupRequest(databaseReference , nearestDrivers);
+                                sendRequest(databaseReference);
                                 map.animateCamera(cu);
 
                                 writeTripData(databaseReference);
@@ -453,67 +527,101 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 });
     }
 
-    //Dialog doesn't work in a fragment ^_^
-    private void setupDialog() {    //Setting up the dialog
-        dialog.setContentView(R.layout.layout_pop_up);
-        TextView textView = dialog.findViewById(R.id.txtNumberLayoutPopUp);
-        textView.setText(Constants.CONFIRM_RIDE);
-        dialog.setCancelable(false);
-        dialog.findViewById(R.id.btnEditLayoutPopUp).setOnClickListener(v -> dialog.dismiss());
-        dialog.findViewById(R.id.btnYesLayoutPopUp).setOnClickListener(v -> writeTripData(databaseReference));
-        dialog.show();
+    private void sendRequest(DatabaseReference reference) {
+        reference.child("5XpFrLvFHL3W4TXxNJh5Je8rkCTy").child(DATABASE_REQUEST).setValue(TRUE);
     }
 
-    private void writeTripData(DatabaseReference reference) {
+    private void setupRequest(@NotNull DatabaseReference reference, HashMap<String, Object> map) {
+        //Request Object:
+        RequestRide requestRide = new RequestRide(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), id, TRUE, user);
+        //Getting Driver Number:
+
+    }
+
+    private void writeTripData(@NotNull DatabaseReference reference) {
         //Getting the requirement:
-        float result[] = new float[1];
+        float[] result = new float[1];
         Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, destination.latitude, destination.longitude, result);
 
         //Setting up the Objects:
-        TripRoute tripRoute = new TripRoute(currentLatLng.toString(), destination.toString(), String.valueOf(result[0]), Constants.STATUS_DRIVING_MOVING);
+        TripRoute tripRoute = new TripRoute(currentLatLng.toString(), destination.toString(), String.valueOf(result[0]), STATUS_DRIVING_MOVING);
         Ride ride = new Ride(Constants.description(currentLatLng.toString(), destination.toString()), String.valueOf(tripCost), tripRoute);
         Trip trip = new Trip(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), "", user, ride);
         //writing to the database:
-        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(Constants.DATABASE_TRIP).updateChildren(trip.toFullTripMap());
+        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(DATABASE_TRIP).updateChildren(trip.toFullTripMap());
+
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
-    private void getNearestDriver(DatabaseReference reference, LatLng oirgin) {
-        Map<String, LatLng> driversLoctions = new HashMap<>();
-        double[] latLng = new double[5];
+    private Map<String, Object> getNearestDrivers(@NonNull DatabaseReference reference) {
+        //Data:
+        HashMap<HashMap<String, Object>, LinkedHashMap<LatLng, Float>> driversData = new HashMap<>();
+        HashMap<String, Object> driversInfo = new HashMap<>();  //ID , Phone Number
+        LinkedHashMap<LatLng, Float> driversLocation = new LinkedHashMap<>();  //Location , Distance
+        float[] distanceBetweenLocations = new float[1];
+        double[] latlng = new double[2];
+
+        //Getting Data from the Database:
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    i = 0;
-                    id = snapshot.getKey();
-                    if (id.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
-                        System.out.println("Same ID = " + id + " = " + FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    } else {
-                        for (DataSnapshot location : snapshot.child(Constants.DATABASE_USER_CURRENT_LOCATION).getChildren()) {
-                            latLng[i] = Double.valueOf(Objects.requireNonNull(location.getValue()).toString());
-                            ++i;
+                try {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        //Objects:
+                        int i = 0;
+                        String driverID = userSnapshot.getKey();
+                        names.add(driverID);
+                        //Getting Ride Full Info:
+                        if (!(Objects.requireNonNull(driverID).equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
+                                && Objects.requireNonNull(userSnapshot.child(DATABASE_IS_DRIVER).getValue()).toString().equalsIgnoreCase(String.valueOf(Boolean.valueOf(true)))) {
+                            for (DataSnapshot locationSnapshot : userSnapshot.child(DATABASE_USER_CURRENT_LOCATION).getChildren()) {
+                                latlng[i++] = Double.valueOf(Objects.requireNonNull(locationSnapshot.getValue()).toString());
+                            }
+                            //Setting up the data:
+                            LatLng lng = new LatLng(latlng[0], latlng[1]);
+                            addMarkertoMap(map, lng, bitmapDescriptorFromVector(Objects.requireNonNull(getActivity()).getApplicationContext(), ic_directions_car_black_24dp), userSnapshot.child(DATABASE_NAME).getValue().toString());
+                            Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, lng.latitude, lng.longitude, distanceBetweenLocations);
+
+                            if (!driversLocation.containsKey(lng))
+                                driversLocation.put(lng, distanceBetweenLocations[0]);
+                            Log.d("Drivers Location", driversLocation.toString());
+
+                            if (!driversInfo.containsKey(driverID))
+                                driversInfo.put(driverID, Objects.requireNonNull(userSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString());
+                            Log.d("Drivers Info", driversInfo.toString());
+
+                            driversData.put(driversInfo, driversLocation);
+                            Log.d("Drivers Data", driversData.toString());
                         }
-                        addMarkertoMap(map, new LatLng(latLng[0], latLng[1]), Constants.NEAREST_DRIVER);
-                        driversLoctions.put(id, new LatLng(latLng[0], latLng[1]));
                     }
-                    String phoneNumber = Objects.requireNonNull(snapshot.child(Constants.DATABASE_PHONE_NUMBER).getValue()).toString();
-                    System.out.println(phoneNumber);
+                } catch (Exception e) {
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), WENT_WRONG, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                databaseError.toException().printStackTrace();
+                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), WENT_WRONG, Toast.LENGTH_SHORT).show();
             }
         });
+
+        return driversInfo;
     }
 
-    private Float getCost(String d0, String d1) {
+    @NotNull
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, Objects.requireNonNull(vectorDrawable).getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    private Float getCost(@NotNull String d0, @NotNull String d1) {
         float dur = Float.valueOf(d0.substring(0, d0.indexOf(" ")));
         float dis = Float.valueOf(d1.substring(0, d1.indexOf(" ")));
-        System.out.println("Distance = " + dis);
-        System.out.println("Duration = " + dur);
 
         float cost;
 

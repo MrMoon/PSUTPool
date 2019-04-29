@@ -33,6 +33,7 @@ public class Constants {
     public static final String TRUN_LOCATION_ON = "Please Turn on Your Location";
     public static final String WELCOME = "Welcome";
     public static final String NEAREST_DRIVER = "Nearest Driver";
+    public static final String DRIVER_REQUEST = "Request";
     public static final String DESTINATION = "Destination";
     public static final String CONFIRM_RIDE = "Confirm Ride";
     public static final String YOU_ARE_HERE = "You're Here";
@@ -48,6 +49,15 @@ public class Constants {
     public static final String DRIVER_DRIVING = "Driving";
     public static final String STATUS_USER_OFFLINE = "Offline";
     public static final String STATUS_USER_ONILINE = "Online";
+
+
+    //Requests:
+    public static final String CUSTOMER_ID = "Customer ID";
+    public static final String CUSTOMER_PHONE_NUMBER = "Customer Phone Number";
+    public static final String CUSTOMER_CURRENT_LOCATION = "Customer Location";
+    public static final String DRIVER_ID = "Driver ID";
+    public static final String DRIVER_PHONE_NUMBER = "Driver Phone Number";
+    public static final String DRIVER_CURRENT_LOCATION = "Driver Location";
 
     //Database:
     public static final String DATABASE_USERS = "Users";
@@ -69,6 +79,7 @@ public class Constants {
     public static final String DATABASE_CAR_TYPE = "Car Type";
     public static final String DATABASE_CAR_MODEL = "Car Model";
     public static final String DATABASE_CAR_COLOR = "Car Color";
+    public static final String DATABASE_REQUEST = "Request";
     //Uni Map:
     public static final Float UNI_MAP_DEFAULT_ZOOM = 17.5f;
     public static final LatLng UNI_MAP_MAIN = new LatLng(32.02324, 35.87611);

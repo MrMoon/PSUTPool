@@ -18,10 +18,13 @@ import com.psut.pool.Fragments.NotificationTabFragment;
 import com.psut.pool.Fragments.OfferTabFragment;
 import com.psut.pool.Fragments.ProfileTabFragment;
 import com.psut.pool.R;
-import com.psut.pool.Shared.Constants;
 import com.psut.pool.Shared.Layout;
 
 import java.util.Objects;
+
+import static com.psut.pool.R.drawable.ic_directions_car_black_24dp;
+import static com.psut.pool.Shared.Constants.DATABASE_IS_DRIVER;
+import static com.psut.pool.Shared.Constants.DATABASE_USERS;
 
 public class MainActivity extends AppCompatActivity implements Layout {
 
@@ -46,16 +49,18 @@ public class MainActivity extends AppCompatActivity implements Layout {
         Objects.requireNonNull(getSupportActionBar()).hide();
 
         //Objects:
-        databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(DATABASE_USERS);
 
         layoutComponents();
         setupFragments();
         isDriver = isDriver();
+
+
     }
 
     private String isDriver() {
         databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                .child(Constants.DATABASE_IS_DRIVER)
+                .child(DATABASE_IS_DRIVER)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -118,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements Layout {
         });
 
         imgCar.setOnClickListener(v -> {
-            imgCar.setImageResource(R.drawable.ic_directions_car_black_24dp);
+            imgCar.setImageResource(ic_directions_car_black_24dp);
             imgAccount.setImageResource(R.drawable.ic_account_circle_gray_24dp);
             imgOffer.setImageResource(R.drawable.ic_local_offer_gray_24dp);
             imgNotification.setImageResource(R.drawable.ic_notifications_gray_24dp);

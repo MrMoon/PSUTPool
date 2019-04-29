@@ -1,8 +1,5 @@
 package com.psut.pool.Models;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-
 import com.psut.pool.Shared.Constants;
 
 import java.util.HashMap;
@@ -40,12 +37,10 @@ public class Driver extends User {
         return toUserObjectMap(Constants.DATABASE_DRIVER_CAR_ID, carID);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public Map<String, Object> toFullDriverMap() {
         HashMap<String, Object> driverCars = new HashMap<>();
         driverCars.putAll(toUserObjectMap(Constants.DATABASE_DRIVER_CAR_ID, carID));
         driverCars.putAll(toCarMap());
-        driverCars.forEach((s, o) -> System.out.println(s + " , " + o));
         return driverCars;
     }
 

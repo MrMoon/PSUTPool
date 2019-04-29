@@ -24,6 +24,7 @@ import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
 import com.psut.pool.Models.User;
 import com.psut.pool.R;
+import com.psut.pool.Shared.Authentication;
 import com.psut.pool.Shared.Constants;
 import com.psut.pool.Shared.Layout;
 
@@ -48,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
+        Authentication.isVerified(FirebaseAuth.getInstance().getCurrentUser().getUid(), this);
         layoutComponents();
 
         //Getting phone number from previous intent:
