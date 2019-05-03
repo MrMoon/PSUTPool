@@ -14,11 +14,11 @@
         android:layout_marginLeft="19.2dp"
         android:src="@drawable/ic_menu_" />
 
-    <customfonts.MyTextView_SF_Pro_Display_Medium
+    <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Medium
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="iCab"
+        android:text="@string/app_name"
         android:textColor="#323643"
         android:textSize="17.3sp" />
 

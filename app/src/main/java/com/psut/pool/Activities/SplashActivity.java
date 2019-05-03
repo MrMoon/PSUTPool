@@ -33,7 +33,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void splash() {
-        new Handler().postDelayed(this::checkUser, 2000);
+        new Handler().postDelayed(this::checkUser, 1500);
     }
 
     private void checkUser() {

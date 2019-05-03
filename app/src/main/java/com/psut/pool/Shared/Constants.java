@@ -37,7 +37,7 @@ public class Constants {
     public static final String DESTINATION = "Destination";
     public static final String CONFIRM_RIDE = "Confirm Ride";
     public static final String YOU_ARE_HERE = "You're Here";
-    public static final String JUST_A_MIN = "Just a Moment";
+    public static final String JUST_A_MIN = "Just a Moment and Try Again";
     public static final String TRUE = Boolean.valueOf(true).toString();
     public static final String FALSE = Boolean.valueOf(false).toString();
     public static final String COST_WILL_BE = "Cost Will Be = ";
@@ -70,17 +70,27 @@ public class Constants {
     public static final String DATABASE_PHONE_NUMBER = "Phone Number";
     public static final String DATABASE_IS_DRIVER = "Driver";
     public static final String DATABASE_USER_STATUS = "Status";
+    public static final String DATABASE_TRIP_STATUS = "Trip Status";
     public static final String DATABASE_USER_CURRENT_LOCATION = "Current Location";
     public static final String DATABASE_USER_CURRENT_LATITUDE = "Current Latitude";
     public static final String DATABASE_USER_CURRENT_LONGITUDE = "Current Longitude";
     public static final String DATABASE_DRIVERS_LOCATIONS = "Drivers Locations";
     public static final String DATABASE_TRIP = "Trip";
+    public static final String DATABASE_DRIVER_NAME = "Driver Name";
+    public static final String DATABASE_DRIVER_ID = "Driver ID";
     public static final String DATABASE_DRIVER_CAR_ID = "Car ID";
     public static final String DATABASE_CAR_TYPE = "Car Type";
     public static final String DATABASE_CAR_MODEL = "Car Model";
     public static final String DATABASE_CAR_COLOR = "Car Color";
-    public static final String DATABASE_REQUEST = "Request";
-    //Uni Map:
+    public static final String DATABASE_REQUESTS = "Requests";
+    public static final String DATABASE_AMOUNT = "Amount";
+    public static final String DATABASE_TRIP_RANK = "Trip Rank";
+    public static final String DATABASE_PICK_UP_LOCATION = "Pick Up Location";
+    public static final String DATABASE_DROP_OFF_LOCATION = "Drop off Location";
+    public static final String DATABASE_DISTANCE = "Distance";
+    public static final String DATABASE_DURATION = "Duration";
+
+    //Uni MapSetup:
     public static final Float UNI_MAP_DEFAULT_ZOOM = 17.5f;
     public static final LatLng UNI_MAP_MAIN = new LatLng(32.02324, 35.87611);
     //Restriction:

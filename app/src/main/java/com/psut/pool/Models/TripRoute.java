@@ -3,10 +3,16 @@ package com.psut.pool.Models;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.psut.pool.Shared.Constants.DATABASE_DISTANCE;
+import static com.psut.pool.Shared.Constants.DATABASE_DROP_OFF_LOCATION;
+import static com.psut.pool.Shared.Constants.DATABASE_DURATION;
+import static com.psut.pool.Shared.Constants.DATABASE_PICK_UP_LOCATION;
+import static com.psut.pool.Shared.Constants.DATABASE_TRIP_STATUS;
+
 public class TripRoute {
 
     //Global Variables and Objects:
-    private String pickUpLocation, dropOffLocation, distance, status;
+    private String pickUpLocation, dropOffLocation, distance, duration, status;
 
     public String getPickUpLocation() {
         return pickUpLocation;
@@ -24,19 +30,21 @@ public class TripRoute {
         return status;
     }
 
-    public TripRoute(String pickUpLocation, String dropOffLocation, String distance, String status) {
+    public TripRoute(String pickUpLocation, String dropOffLocation, String distance, String duration, String status) {
         this.pickUpLocation = pickUpLocation;
         this.dropOffLocation = dropOffLocation;
         this.distance = distance;
         this.status = status;
+        this.duration = duration;
     }
 
     public Map<String, Object> toRouteMap() {
         HashMap<String, Object> routes = new HashMap<>();
-        routes.put("Pick Up Location", pickUpLocation);
-        routes.put("Drop Off Location", dropOffLocation);
-        routes.put("Distance", distance);
-        routes.put("Status", status);
+        routes.put(DATABASE_PICK_UP_LOCATION, pickUpLocation);
+        routes.put(DATABASE_DROP_OFF_LOCATION, dropOffLocation);
+        routes.put(DATABASE_DISTANCE, distance);
+        routes.put(DATABASE_DURATION, duration);
+        routes.put(DATABASE_TRIP_STATUS, status);
         return routes;
     }
 }

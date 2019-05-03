@@ -204,7 +204,7 @@
                         android:layout_marginLeft="239.4dp"
                         android:orientation="vertical">
 
-                        <customfonts.MyTextView_SF_Pro_Display_Semibold
+                        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Semibold
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -240,7 +240,7 @@
                         android:layout_marginLeft="329.4dp"
                         android:orientation="vertical">
 
-                        <com.psut.pool.customfonts.MyTextView_SF_Pro_Display_Semibold
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -257,7 +257,7 @@
                             android:layout_marginTop="4dp"
                             android:src="@drawable/car3" />
 
-                        <customfonts.MyTextView_Roboto_Regular
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
@@ -277,7 +277,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp">
 
-            <com.psut.pool.customfonts.Button_SF_Pro_Display_Medium
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

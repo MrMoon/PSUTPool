@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <fragment
         android:id="@+id/fragmentMap"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardViewSearchMainFrag"
         android:layout_width="match_parent"
         android:layout_height="46.1dp"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,17 +34,171 @@
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardviewCustomeTrip"
+        android:layout_width="match_parent"
+        android:layout_height="92.2dp"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        app:cardCornerRadius="5.8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/i1"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="14.4dp"
+                    android:layout_marginTop="16.3dp"
+                    android:src="@drawable/pin_black" />
+
+                <ImageView
+                    android:id="@+id/i2"
+                    android:layout_width="2dp"
+                    android:layout_height="26.9dp"
+                    android:layout_marginStart="26dp"
+                    android:layerType="software"
+                    android:src="@drawable/rect_dotted" />
+
+                <ImageView
+                    android:id="@+id/i3"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="19dp"
+                    android:src="@drawable/navigatiob_blue" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15.4dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtDropOffLocationNameFragPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14.3dp"
+                    android:text=""
+                    android:textColor="#323643"
+                    android:textSize="13.4sp" />
+
+                <TextView
+                    android:id="@+id/txtPickUpLocationNameFragPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14.3dp"
+                    android:layout_marginTop="30dp"
+                    android:text=""
+                    android:textColor="#323643"
+                    android:textSize="13.4sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
     <Button
         android:id="@+id/btnRouteFragMain"
-        android:layout_width="225dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_margin="30sp"
         android:background="@drawable/button_shape_corners"
-        android:text="@string/start"
+        android:text="@string/look_up"
         android:textAllCaps="false"
-        android:textColor="#fff"
+        android:textColor="@color/white"
         android:textSize="25sp"
         android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/relativeConfirmTrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardviewConfirmTrip"
+            android:layout_width="match_parent"
+            android:layout_height="150.8dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            app:cardCornerRadius="5.8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="2">
+
+                    <ImageView
+                        android:id="@+id/car1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/car"
+                        tools:ignore="NestedWeights" />
+
+                    <TextView
+                        android:id="@+id/txtCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:textColor="#606470"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtDriverNamePrimaryFrag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/quantum_black_100"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/btnConfirmTripFragPrimary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@color/background"
+                        android:text="@string/confirm_trip"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="15.4sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
 </RelativeLayout>

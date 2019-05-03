@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements Layout {
     private ImageView imgCar, imgOffer, imgNotification, imgAccount;
     private Fragment fragmentMainTab, fragmentOfferTab, fragmentNofitication, fragmentProfile;
     private static String isDriver;
-    private DatabaseReference databaseReference;
+    private static DatabaseReference databaseReference;
 
     public static String getIsDriver() {
         return isDriver;
@@ -40,6 +41,26 @@ public class MainActivity extends AppCompatActivity implements Layout {
 
     public static void setIsDriver(String isDriver) {
         MainActivity.isDriver = isDriver;
+    }
+
+    public static void isDriver() {
+        databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .child(DATABASE_IS_DRIVER)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            isDriver = Objects.requireNonNull(Objects.requireNonNull(dataSnapshot.getValue()).toString());
+                            Log.d("isDriver", isDriver);
+                            Log.d("DataSnapshot", dataSnapshot.getValue().toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -53,28 +74,7 @@ public class MainActivity extends AppCompatActivity implements Layout {
 
         layoutComponents();
         setupFragments();
-        isDriver = isDriver();
-
-
-    }
-
-    private String isDriver() {
-        databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                .child(DATABASE_IS_DRIVER)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            isDriver = Objects.requireNonNull(dataSnapshot.getValue()).toString();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-        return isDriver;
+        isDriver();
     }
 
     @Override

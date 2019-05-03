@@ -1,7 +1,5 @@
 package com.psut.pool.Models;
 
-import android.os.Build;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +27,8 @@ public class Wallet {
 
     public Map<String, Object> toFullwalletMap() {
         HashMap<String, Object> fullwallet = new HashMap<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fullwallet.forEach(toWalletMap()::putIfAbsent);
-            fullwallet.forEach(user.toUserMap()::putIfAbsent);
-        }
+        fullwallet.putAll(toWalletMap());
+        fullwallet.putAll(user.toUserMap());
         return fullwallet;
     }
 }
