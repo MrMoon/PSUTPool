@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="46.1dp"
         android:layout_margin="10dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +37,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/cardviewCustomeTrip"
         android:layout_width="match_parent"
-        android:layout_height="92.2dp"
+        android:layout_height="110dp"
         android:layout_margin="10dp"
         android:visibility="gone"
         app:cardCornerRadius="5.8dp">
@@ -88,6 +88,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="14.3dp"
                     android:text=""
+                    android:maxLines="1"
+                    android:scrollbars="horizontal"
                     android:textColor="#323643"
                     android:textSize="13.4sp" />
 
@@ -98,14 +100,11 @@
                     android:layout_marginStart="14.3dp"
                     android:layout_marginTop="30dp"
                     android:text=""
+                    android:maxLines="1"
+                    android:scrollbars="horizontal"
                     android:textColor="#323643"
                     android:textSize="13.4sp" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
@@ -176,27 +175,44 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:weightSum="4"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtDriverNamePrimaryFrag"
+                        android:id="@+id/txtNamePrimaryFrag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_margin="10dp"
+                        android:layout_weight="2"
                         android:textColor="@color/quantum_black_100"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        tools:ignore="NestedWeights" />
 
                     <Button
                         android:id="@+id/btnConfirmTripFragPrimary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
                         android:background="@color/background"
                         android:text="@string/confirm_trip"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="15.4sp" />
+
+                    <Button
+                        android:id="@+id/btnDenyTripFragPrimary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@color/background"
+                        android:text="@string/deny_trip"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="15.4sp"
+                        tools:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>

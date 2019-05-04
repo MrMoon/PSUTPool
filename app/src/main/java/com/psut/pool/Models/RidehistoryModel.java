@@ -7,9 +7,9 @@ package com.psut.pool.Models;
 public class RidehistoryModel {
 
     Integer i1, i2, i3;
-    String txtmall, txthome, txtdate, txtprice;
+    String txtmall, txthome, txtdate, txtprice, txtDriverID;
 
-    public RidehistoryModel(Integer i1, Integer i2, Integer i3, String txtmall, String txthome, String txtdate, String txtprice) {
+    public RidehistoryModel(Integer i1, Integer i2, Integer i3, String txtmall, String txthome, String txtdate, String txtprice, String txtDriverID) {
         this.i1 = i1;
         this.i2 = i2;
         this.i3 = i3;
@@ -17,6 +17,7 @@ public class RidehistoryModel {
         this.txthome = txthome;
         this.txtdate = txtdate;
         this.txtprice = txtprice;
+        this.txtDriverID = txtDriverID;
     }
 
     public Integer getI1() {
@@ -73,5 +74,13 @@ public class RidehistoryModel {
 
     public void setTxtprice(String txtprice) {
         this.txtprice = txtprice;
+    }
+
+    public String getTxtDriverID() {
+        return txtDriverID;
+    }
+
+    public void setTxtDriverID(String txtDriverID) {
+        this.txtDriverID = txtDriverID;
     }
 }

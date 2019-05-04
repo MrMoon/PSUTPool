@@ -14,11 +14,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -68,38 +70,69 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.Activities.MainActivity;
 import com.psut.pool.Models.Customer;
 import com.psut.pool.Models.Driver;
+import com.psut.pool.Models.Rating;
 import com.psut.pool.Models.Ride;
 import com.psut.pool.Models.Trip;
 import com.psut.pool.Models.TripRoute;
 import com.psut.pool.Models.User;
 import com.psut.pool.R;
-import com.psut.pool.RequestAndResponse.CheckRequest;
 import com.psut.pool.Shared.Constants;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_GREEN;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
 import static com.psut.pool.Shared.Constants.API_KEY;
+import static com.psut.pool.Shared.Constants.CONFIRMED;
+import static com.psut.pool.Shared.Constants.CONFIRM_RIDE;
+import static com.psut.pool.Shared.Constants.CUSTOMER_CURRENT_LATITUDE;
+import static com.psut.pool.Shared.Constants.CUSTOMER_CURRENT_LOCATION_DROP_NAME;
+import static com.psut.pool.Shared.Constants.CUSTOMER_CURRENT_LOCATION_PICKUP_NAME;
+import static com.psut.pool.Shared.Constants.CUSTOMER_CURRENT_LONGITIUDE;
+import static com.psut.pool.Shared.Constants.CUSTOMER_ID;
+import static com.psut.pool.Shared.Constants.CUSTOMER_NAME;
+import static com.psut.pool.Shared.Constants.DATABASE_COST;
 import static com.psut.pool.Shared.Constants.DATABASE_IS_DRIVER;
 import static com.psut.pool.Shared.Constants.DATABASE_NAME;
 import static com.psut.pool.Shared.Constants.DATABASE_PHONE_NUMBER;
+import static com.psut.pool.Shared.Constants.DATABASE_REQUEST;
 import static com.psut.pool.Shared.Constants.DATABASE_REQUESTS;
+import static com.psut.pool.Shared.Constants.DATABASE_RESPONSE;
 import static com.psut.pool.Shared.Constants.DATABASE_TRIP;
+import static com.psut.pool.Shared.Constants.DATABASE_TRIP_STATUS;
+import static com.psut.pool.Shared.Constants.DATABASE_USERS;
 import static com.psut.pool.Shared.Constants.DATABASE_USER_CURRENT_LOCATION;
+import static com.psut.pool.Shared.Constants.DATABASE_VALUE;
+import static com.psut.pool.Shared.Constants.DELETED_REQUEST;
+import static com.psut.pool.Shared.Constants.DELETE_REQUEST;
+import static com.psut.pool.Shared.Constants.DENYED;
 import static com.psut.pool.Shared.Constants.DESTINATION;
+import static com.psut.pool.Shared.Constants.DESTINATION_LATITUDE;
+import static com.psut.pool.Shared.Constants.DESTINATION_LONGITIUDE;
+import static com.psut.pool.Shared.Constants.DRIVER_IS_ON_HIS_WAY;
+import static com.psut.pool.Shared.Constants.DRIVER_PHONE_NUMBER;
+import static com.psut.pool.Shared.Constants.FALSE;
+import static com.psut.pool.Shared.Constants.REQUEST_CONFIRMED;
+import static com.psut.pool.Shared.Constants.REQUEST_DENYED;
+import static com.psut.pool.Shared.Constants.REQUEST_SENT;
+import static com.psut.pool.Shared.Constants.RESPONSE_DENYED;
+import static com.psut.pool.Shared.Constants.STATUS_DRIVING_MOVING;
 import static com.psut.pool.Shared.Constants.STATUS_DRIVING_STARTING;
 import static com.psut.pool.Shared.Constants.TRUE;
 import static com.psut.pool.Shared.Constants.WENT_WRONG;
@@ -109,8 +142,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     //Global Variables and Objects:
     private View view;
-    private Button btnRoute, btnConfirmRide;
-    private TextView txtDropOffLocationName, txtPickUpLocationName, txtDriverName, txtCost;
+    private Button btnRoute, btnConfirmRide, btnDenyRide;
+    private TextView txtDropOffLocationName, txtPickUpLocationName, txtName, txtCost;
     private CardView cardViewSearch, cardViewCustomerTrip, cardViewConfirmTrip;
     private RelativeLayout relativeConfirm;
     private GoogleMap map;
@@ -123,12 +156,13 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private HashMap<Float, String> driversInfo = new HashMap<>();  //Distance Between Locations , ID
     private HashMap<String, String> driversIDAndNames = new HashMap<>();    //ID , Name
     private HashMap<String, String> driversNameAndID = new HashMap<>();    //Name , ID
-    private String distance, duration, driverName, driverID, currentLocationName, destinationLocationName;
+    private HashMap<String, Object> customerInfo = new HashMap<>();
+    private String distance, duration, driverName, driverID, currentLocationName, destinationLocationName, uid, userName, phoneNumber;
     private User user;
-    private CheckRequest checkRequest;
     private float cost, min;
+    private int rideNumber;
     private String[] permissions;
-    private boolean isPermissionGranted, isDriver = Boolean.valueOf(MainActivity.getIsDriver());
+    private boolean isPermissionGranted, isDriver = Boolean.parseBoolean(MainActivity.getIsDriver());
 
 
     @SuppressLint("InflateParams")
@@ -143,10 +177,16 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void initObj() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         markerPoints = new ArrayList<>();
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
         databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
-        checkRequest = new CheckRequest(databaseReference, getActivity());
+        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        isDriver = Boolean.parseBoolean(MainActivity.getIsDriver());
         if (!Places.isInitialized())
             Places.initialize(Objects.requireNonNull(getActivity()).getApplicationContext(), API_KEY);
     }
@@ -202,21 +242,62 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (isDriver) {
+            checkRequest(databaseReference);
+        } else {
+            checkConfirm(databaseReference);
+        }
+    }
+
+    private void checkConfirm(DatabaseReference reference) {
+        reference.child(uid).child(DATABASE_RESPONSE).addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.child(DATABASE_VALUE).exists()) {
+                        if (Objects.requireNonNull(dataSnapshot.child(DATABASE_VALUE).getValue()).toString().equalsIgnoreCase(TRUE)) {
+                            Toast.makeText(context, REQUEST_CONFIRMED + " " + DRIVER_IS_ON_HIS_WAY, Toast.LENGTH_SHORT).show();
+                            btnDenyRide.setVisibility(View.GONE);
+                            btnConfirmRide.setVisibility(View.GONE);
+                            relativeConfirm.setVisibility(View.VISIBLE);
+                            cardViewConfirmTrip.setVisibility(View.VISIBLE);
+                            txtName.setVisibility(View.VISIBLE);
+                            txtName.setText("Driver Number: " + Objects.requireNonNull(dataSnapshot.child(DRIVER_PHONE_NUMBER).getValue()).toString());
+                        } else {
+                            Toast.makeText(context, REQUEST_DENYED, Toast.LENGTH_SHORT).show();
+                            setupDenyLayout(RESPONSE_DENYED);
+                        }
+                    } else {
+                        if (dataSnapshot.getValue().toString().equalsIgnoreCase(DENYED)) {
+                            Toast.makeText(context, REQUEST_DENYED, Toast.LENGTH_SHORT).show();
+                            setupDenyLayout(RESPONSE_DENYED);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     //Setting up the after it's ready
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d("Map", "Map is Ready");
-        if (MainActivity.getIsDriver() == null) {
-            MainActivity.isDriver();
-            isDriver = Boolean.valueOf(MainActivity.getIsDriver());
-        }
-
-        if (isDriver) {
-            if (checkRequest.checkRequest(databaseReference)) {
-                cardViewCustomerTrip.setVisibility(View.VISIBLE);
-            }
-        }
 
         //Re-Checking the permissions
         if (isPermissionGranted) {
@@ -234,7 +315,13 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             //Markers
             map.setOnMapClickListener(latLng -> setupMarkers(map, latLng, databaseReference));
 
-            getNearestDrivers(databaseReference);
+            if (isDriver) {
+                checkRequest(databaseReference);
+            } else {
+                checkConfirm(databaseReference);
+            }
+
+            getDrivers(databaseReference);
 
             //Trip Setup
             btnRoute.setOnClickListener(v -> startFullTripSetup(map, currentLatLng, destination, databaseReference));
@@ -243,6 +330,114 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             getLocationPermission();
         }
     }
+
+    private void checkRequest(DatabaseReference reference) {
+        reference.child(uid).child(DATABASE_REQUESTS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.exists()) {
+                            Toast.makeText(context, "You have a request ", Toast.LENGTH_SHORT).show();
+                            getTripInfo(reference, snapshot.getKey());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getTripInfo(DatabaseReference reference, String key) {
+        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(DATABASE_REQUESTS).child(key).addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //Data
+                    String customerID = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_ID).getValue()).toString();
+                    String customerName = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_NAME).getValue()).toString();
+                    String customerPickUpLocationName = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_CURRENT_LOCATION_PICKUP_NAME).getValue()).toString();
+                    String customerLocationLat = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_CURRENT_LATITUDE).getValue()).toString();
+                    String customerLocationLon = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_CURRENT_LONGITIUDE).getValue()).toString();
+                    String customerDropOffLocationName = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_CURRENT_LOCATION_DROP_NAME).getValue()).toString();
+                    String customerDestLat = Objects.requireNonNull(dataSnapshot.child(DESTINATION_LATITUDE).getValue()).toString();
+                    String customerDestLon = Objects.requireNonNull(dataSnapshot.child(DESTINATION_LONGITIUDE).getValue()).toString();
+                    String cost = Objects.requireNonNull(dataSnapshot.child(DATABASE_COST).getValue()).toString();
+                    String phoneNumber = Objects.requireNonNull(Objects.requireNonNull(dataSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString());
+                    LatLng customerLatLng = new LatLng(Double.valueOf(customerLocationLat), Double.valueOf(customerLocationLon));
+                    LatLng destLatLng = new LatLng(Double.valueOf(customerDestLat), Double.valueOf(customerDestLon));
+
+                    //Layout
+                    setupRequestLayout(View.VISIBLE);
+                    txtPickUpLocationName.setText(customerPickUpLocationName);
+                    txtDropOffLocationName.setText(customerDropOffLocationName);
+                    txtName.setText(customerName);
+                    txtCost.setText(cost + " JD");
+
+                    btnConfirmRide.setOnClickListener(v -> {
+                        sendResponse(reference, customerID, TRUE, phoneNumber);
+                        startTrip(reference, destLatLng);
+                    });
+
+                    btnDenyRide.setOnClickListener(v -> {
+                        sendResponse(reference, customerID, DENYED);
+                        setupTripLayout(map, reference);
+                        reference.child(uid).child(DATABASE_REQUESTS).setValue(FALSE);
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setupRequestLayout(int value) {
+        cardViewCustomerTrip.setVisibility(value);
+        relativeConfirm.setVisibility(value);
+        cardViewConfirmTrip.setVisibility(value);
+        btnDenyRide.setVisibility(value);
+    }
+
+    private void sendResponse(DatabaseReference reference, String customerID, String value, String phoneNumber) {
+        reference.child(customerID).child(DATABASE_RESPONSE).updateChildren(toResponesMap(value, phoneNumber));
+        reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_REQUESTS).setValue(CONFIRMED);
+    }
+
+    private void sendResponse(DatabaseReference reference, String customerID, String value) {
+        reference.child(customerID).child(DATABASE_RESPONSE).setValue(DENYED);
+    }
+
+    private Map<String, Object> toResponesMap(String value, String phoneNumber) {
+        HashMap<String, Object> respones = new HashMap<>();
+        respones.put(DATABASE_VALUE, value);
+        respones.put(DRIVER_PHONE_NUMBER, phoneNumber);
+        return respones;
+    }
+
+    private void startTrip(DatabaseReference reference, LatLng dest) {
+        cardViewConfirmTrip.setVisibility(View.GONE);
+        cardViewConfirmTrip.setVisibility(View.GONE);
+        relativeConfirm.setVisibility(View.GONE);
+        reference.child(uid).child(DATABASE_TRIP).child(String.valueOf(rideNumber)).child(DATABASE_TRIP_STATUS).setValue(STATUS_DRIVING_MOVING);
+        launchGoogleMaps(dest);
+    }
+
+    private void launchGoogleMaps(LatLng dest) {
+        String URL = "https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=" + dest.latitude + "," + dest.longitude;
+        Uri location = Uri.parse(URL);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+        startActivity(mapIntent);
+    }
+
 
     private void setupMap(GoogleMap googleMap) {
         getLocation();
@@ -349,8 +544,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
                             writeUserData(databaseReference, currentLatLng);
-
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                         } else {
                             Toast.makeText(getActivity(), "Null", Toast.LENGTH_SHORT).show();
                         }
@@ -362,7 +555,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -371,26 +563,76 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         setDriverName(reference);
         setupConfirm(reference);
         setupTripLayout(googleMap, reference);
-        btnConfirmRide.setOnClickListener(v -> sendRequest(reference));
+        btnConfirmRide.setOnClickListener(v -> sendRequestToDriver(reference));
     }
 
     @SuppressLint("SetTextI18n")
     private void setupConfirm(DatabaseReference reference) {
-        if (TextUtils.isEmpty(txtDriverName.getText().toString())) {
+        if (TextUtils.isEmpty(txtName.getText().toString())) {
             setDriverName(reference);
         }
     }
 
-    private void sendRequest(DatabaseReference reference) {
-        String driverIDToSend = driversNameAndID.get(txtDriverName.getText().toString());
-        driverID = driversNameAndID.get(txtDriverName.getText().toString());
-        if (!TextUtils.isEmpty(driverIDToSend)) {
-            reference.child(Objects.requireNonNull(driverIDToSend)).child(DATABASE_REQUESTS).setValue(TRUE);
-        } else {
-            reference.child(Objects.requireNonNull(driversInfo.get(Collections.min(driversInfo.keySet())))).child(DATABASE_REQUESTS).setValue(TRUE);
+    private void sendRequestToDriver(DatabaseReference reference) {
+        //Data
+        String driverIDToSend = driversNameAndID.get(txtName.getText().toString());
+        driverID = driversNameAndID.get(txtName.getText().toString());
+        driverName = txtName.getText().toString();
+
+        if (TextUtils.isEmpty(driverIDToSend)) {
+            driverIDToSend = getNearestDriverID();
+            txtName.setText(getNearestDriverName());
         }
 
-        writeTripData(reference, txtDriverName.getText().toString(), Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        writeTripData(reference, txtName.getText().toString(), uid);
+        writeRequestData(reference, Objects.requireNonNull(driverIDToSend));
+
+        Snackbar snackbar = Snackbar.make(view, REQUEST_SENT + txtName.getText().toString(), Snackbar.LENGTH_LONG);
+        snackbar.show();
+
+        checkConfirm(reference);
+
+        btnConfirmRide.setText(DELETE_REQUEST);
+        btnConfirmRide.setOnClickListener(v -> denyRequest(reference, txtName.getText().toString()));
+    }
+
+    private void writeRequestData(DatabaseReference reference, @NonNull String id) {
+        getUserName(reference, uid, id);
+    }
+
+    private HashMap<String, Object> getCustomerInfo() {
+        HashMap<String, Object> customerInfo = new HashMap<>();
+        customerInfo.put(CUSTOMER_ID, uid);
+        customerInfo.put(CUSTOMER_NAME, userName);
+        customerInfo.put(CUSTOMER_CURRENT_LOCATION_PICKUP_NAME, currentLocationName);
+        customerInfo.put(CUSTOMER_CURRENT_LOCATION_DROP_NAME, destinationLocationName);
+        customerInfo.put(CUSTOMER_CURRENT_LATITUDE, currentLatLng.latitude);
+        customerInfo.put(CUSTOMER_CURRENT_LONGITIUDE, currentLatLng.longitude);
+        customerInfo.put(DESTINATION_LATITUDE, destination.latitude);
+        customerInfo.put(DESTINATION_LONGITIUDE, destination.longitude);
+        customerInfo.put(DATABASE_COST, cost);
+        customerInfo.put(DATABASE_REQUEST, TRUE);
+        customerInfo.put(DATABASE_PHONE_NUMBER, phoneNumber);
+        return customerInfo;
+    }
+
+    private void denyRequest(DatabaseReference reference, String name) {
+        Log.d("Request to id = " + Objects.requireNonNull(driversNameAndID.get(name)), DELETE_REQUEST);
+        deleteDriverTripRequest(reference, name);
+        deleteUserTripRequest(reference, uid);
+        --rideNumber;
+    }
+
+    private void deleteUserTripRequest(DatabaseReference reference, String uid) {
+        reference.child(Objects.requireNonNull(uid)).child(DATABASE_TRIP).removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) setupDenyLayout(DELETED_REQUEST);
+        });
+    }
+
+    private void deleteDriverTripRequest(DatabaseReference reference, String name) {
+        reference.child(Objects.requireNonNull(driversNameAndID.get(name))).child(DATABASE_REQUESTS).setValue(FALSE).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) setupDenyLayout(DELETED_REQUEST);
+        });
     }
 
     private String getNearestDriverName() {
@@ -423,12 +665,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             user = new Driver();
             user.setCurruntLatitude(String.valueOf(latLng.latitude));
             user.setCurruntLongitude(String.valueOf(latLng.longitude));
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
+            reference.child(uid).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
         } else {
             user = new Customer();
             user.setCurruntLatitude(String.valueOf(latLng.latitude));
             user.setCurruntLongitude(String.valueOf(latLng.longitude));
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
+            reference.child(uid).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
         }
     }
 
@@ -437,6 +679,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         if (Build.VERSION.SDK_INT >= 26) fragmentTransaction.setReorderingAllowed(false);
         markerPoints.clear();
         map.clear();
+        btnConfirmRide.setText(CONFIRM_RIDE);
         fragmentTransaction.detach(this).attach(this).commit();
         getLocation();
     }
@@ -447,9 +690,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     private void setupMarkers(GoogleMap googleMap, LatLng latLng, DatabaseReference reference) {
         addPrimaryMarker(googleMap, markerPoints, latLng, reference);
-
+        relativeConfirm.setVisibility(View.GONE);
+        cardViewConfirmTrip.setVisibility(View.GONE);
         //Markers Set:
         try {
+            getLocation();
             //Getting latitude and longitude:
             double latitude = currentLocation.getLatitude();
             double longitude = currentLocation.getLongitude();
@@ -481,9 +726,10 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         if (list.size() > 1) {
             list.clear();
             googleMap.clear();
-            getNearestDrivers(reference);
+            getDrivers(reference);
             relativeConfirm.setVisibility(View.GONE);
-            btnRoute.setVisibility(View.VISIBLE);
+            btnRoute.setVisibility(View.GONE);
+            btnConfirmRide.setText(CONFIRM_RIDE);
         }
 
         list.add(lng);
@@ -580,19 +826,60 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void writeTripData(@NotNull DatabaseReference reference, String driverName, String id) {
-        //Getting the requirement
+        //Data
         float[] result = new float[1];
         Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, destination.latitude, destination.longitude, result);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = simpleDateFormat.format(new Date());
+        rideNumber = getLastRideNumber(reference, id);
+
         //Setting up the Objects
         TripRoute tripRoute = new TripRoute(currentLocationName, destinationLocationName, distance, duration, STATUS_DRIVING_STARTING);
-        Ride ride = new Ride(Constants.description(currentLocationName, destinationLocationName), cost + " JD", tripRoute);
-        Trip trip = new Trip(driverID, String.valueOf(5), user, ride, driverName);
+        Ride ride = new Ride(Constants.description(currentLocationName, destinationLocationName), cost + " JD", date, tripRoute);
+        Rating rating = new Rating("", String.valueOf(rideNumber));
+        Trip trip = new Trip(driversNameAndID.get(txtName.getText().toString()), user, ride, driverName, rating);
         //writing to the database
-        reference.child(id).child(DATABASE_TRIP).updateChildren(trip.toFullTripMap());
+        reference.child(id).child(DATABASE_TRIP).child(String.valueOf(rideNumber)).updateChildren(trip.toFullTripMap()).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) rideNumber++;
+        });
+    }
+
+    private int getLastRideNumber(DatabaseReference reference, String id) {
+        Query lastQuery = reference.child(id).child(DATABASE_TRIP).orderByKey().limitToLast(1);
+        lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot.toString());
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        rideNumber = Integer.valueOf(Objects.requireNonNull(snapshot.getKey()));
+                    }
+                } else {
+                    rideNumber = 0;
+                }
+                System.out.println(rideNumber);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return rideNumber;
+    }
+
+    private void setupDenyLayout(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+        cardViewConfirmTrip.setVisibility(View.GONE);
+        btnRoute.setVisibility(View.GONE);
+        map.clear();
+        btnConfirmRide.setText(CONFIRM_RIDE);
     }
 
     //Return the nearest driver id and name
-    private void getNearestDrivers(@NonNull DatabaseReference reference) {
+    private void getDrivers(@NonNull DatabaseReference reference) {
         //Data
         getLocation();
         HashMap<HashMap<Float, String>, LinkedHashMap<LatLng, Float>> driversData = new HashMap<>();
@@ -607,13 +894,21 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 try {
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         System.out.println(userSnapshot.toString());
+                        getLocation();
                         if (userSnapshot.exists()) {
                             //Objects
                             int i = 0;
                             String driverID = userSnapshot.getKey();
+
+                            //Validating
+                            if (Objects.requireNonNull(driverID).equals(uid) || driverID.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
+                                continue;
+                            if (Objects.requireNonNull(userSnapshot.child(DATABASE_IS_DRIVER).getValue()).toString().equalsIgnoreCase(FALSE))
+                                continue;
+
                             //Getting Ride Full Info
-                            if (!(Objects.requireNonNull(driverID).equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
-                                    && Objects.requireNonNull(userSnapshot.child(DATABASE_IS_DRIVER).getValue()).toString().equalsIgnoreCase(String.valueOf(Boolean.valueOf(true)))) {
+                            if (!(Objects.requireNonNull(driverID).equals(uid)
+                                    && Objects.requireNonNull(userSnapshot.child(DATABASE_IS_DRIVER).getValue()).toString().equalsIgnoreCase(TRUE))) {
                                 for (DataSnapshot locationSnapshot : userSnapshot.child(DATABASE_USER_CURRENT_LOCATION).getChildren()) {
                                     latlng[i++] = Double.valueOf(Objects.requireNonNull(locationSnapshot.getValue()).toString());
                                 }
@@ -638,7 +933,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                         }
                     }
                 } catch (Exception e) {
-                    Toast.makeText(context, WENT_WRONG, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -649,23 +943,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), WENT_WRONG, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private String readDriverNameFromID(DatabaseReference reference, String nearestID) {
-        reference.child(Objects.requireNonNull(nearestID)).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    driverName = Objects.requireNonNull(dataSnapshot.child(DATABASE_NAME).getValue()).toString();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        return driverName;
     }
 
     @NotNull
@@ -683,6 +960,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             float dur = Float.valueOf(d0.substring(0, d0.indexOf(" ")));
             float dis = Float.valueOf(d1.substring(0, d1.indexOf(" ")));
 
+            System.out.println("Duration = " + dur + "\n" + "Distance = " + dis);
+
             if (dis > 0 && dis <= 5) {
                 cost = 0.5f;
             } else if (dis >= 6 && dis <= 11) {
@@ -698,7 +977,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     public void layoutComponents() {
         txtCost = view.findViewById(R.id.txtCost);
-        txtDriverName = view.findViewById(R.id.txtDriverNamePrimaryFrag);
+        txtName = view.findViewById(R.id.txtNamePrimaryFrag);
         txtDropOffLocationName = view.findViewById(R.id.txtDropOffLocationNameFragPrimary);
         txtPickUpLocationName = view.findViewById(R.id.txtPickUpLocationNameFragPrimary);
         relativeConfirm = view.findViewById(R.id.relativeConfirmTrip);
@@ -707,16 +986,18 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         cardViewCustomerTrip = view.findViewById(R.id.cardviewCustomeTrip);
         btnRoute = view.findViewById(R.id.btnRouteFragMain);
         btnConfirmRide = view.findViewById(R.id.btnConfirmTripFragPrimary);
+        btnDenyRide = view.findViewById(R.id.btnDenyTripFragPrimary);
     }
 
     private void setupTripLayout(GoogleMap googleMap, DatabaseReference reference) {
         btnRoute.setVisibility(View.GONE);
+        btnDenyRide.setVisibility(View.GONE);
         cardViewSearch.setVisibility(View.VISIBLE);
-        relativeConfirm.setVisibility(View.VISIBLE);
         cardViewConfirmTrip.setVisibility(View.VISIBLE);
+        relativeConfirm.setVisibility(View.VISIBLE);
         setDriverName(reference);
         googleMap.setOnMarkerClickListener(marker -> {
-            txtDriverName.setText(getDriverIDFromMarker(marker));
+            txtName.setText(getDriverIDFromMarker(marker));
             System.out.println("Driver ID " + driverID);
             System.out.println("Drive Name " + driverName);
             return false;
@@ -724,7 +1005,30 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void setDriverName(DatabaseReference reference) {
-        if (!driversInfo.isEmpty()) txtDriverName.setText(getNearestDriverName());
-        else getNearestDrivers(reference);
+        if (!driversInfo.isEmpty()) txtName.setText(getNearestDriverName());
+        else getDrivers(reference);
+    }
+
+    private void getUserName(DatabaseReference reference, String userID, String driverID) {
+        reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    userName = Objects.requireNonNull(dataSnapshot.child(DATABASE_NAME).getValue()).toString();
+                    phoneNumber = Objects.requireNonNull(dataSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString();
+                    customerInfo = getCustomerInfo();
+                    writeCustomerInfo(reference, driverID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void writeCustomerInfo(DatabaseReference reference, String id) {
+        reference.child(Objects.requireNonNull(id)).child(DATABASE_REQUESTS).child(String.valueOf(rideNumber)).updateChildren(customerInfo);
     }
 }

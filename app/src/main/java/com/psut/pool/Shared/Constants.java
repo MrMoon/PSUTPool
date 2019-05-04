@@ -34,6 +34,16 @@ public class Constants {
     public static final String WELCOME = "Welcome";
     public static final String NEAREST_DRIVER = "Nearest Driver";
     public static final String DRIVER_REQUEST = "Request";
+    public static final String REQUEST_SENT = "Request Sent to ";
+    public static final String RESPONSE_DENYED = "Response Denyed";
+    public static final String REQUEST_CONFIRMED = "Request Confirmed";
+    public static final String REQUEST_DENYED = "Request Denyed by Driver";
+    public static final String DRIVER_IS_ON_HIS_WAY = "Driver is on his Way";
+    public static final String DELETE_REQUEST = "Delete Request";
+    public static final String DELETED_REQUEST = "Request Deleted ";
+    public static final String DENY_REQUEST = "Request Denyed";
+    public static final String DENYED = "Denyed";
+    public static final String CONFIRMED = "Confirmed";
     public static final String DESTINATION = "Destination";
     public static final String CONFIRM_RIDE = "Confirm Ride";
     public static final String YOU_ARE_HERE = "You're Here";
@@ -49,12 +59,20 @@ public class Constants {
     public static final String DRIVER_DRIVING = "Driving";
     public static final String STATUS_USER_OFFLINE = "Offline";
     public static final String STATUS_USER_ONILINE = "Online";
-
+    public static final String NO_HISTORY = "No History Was Found";
+    public static final String PLEASE_RATE_THE_TRIP = "Please Rate The Trip";
 
     //Requests:
     public static final String CUSTOMER_ID = "Customer ID";
     public static final String CUSTOMER_PHONE_NUMBER = "Customer Phone Number";
     public static final String CUSTOMER_CURRENT_LOCATION = "Customer Location";
+    public static final String CUSTOMER_CURRENT_LOCATION_PICKUP_NAME = "Customer Location Pick up Name";
+    public static final String CUSTOMER_CURRENT_LOCATION_DROP_NAME = "Customer Location Drop Off Name";
+    public static final String CUSTOMER_CURRENT_LATITUDE = "Customer Latitude";
+    public static final String CUSTOMER_CURRENT_LONGITIUDE = "Customer Longitude";
+    public static final String DESTINATION_LATITUDE = "Destination Latitude";
+    public static final String DESTINATION_LONGITIUDE = "Destination Longitude";
+    public static final String CUSTOMER_NAME = "Customer Name";
     public static final String DRIVER_ID = "Driver ID";
     public static final String DRIVER_PHONE_NUMBER = "Driver Phone Number";
     public static final String DRIVER_CURRENT_LOCATION = "Driver Location";
@@ -63,6 +81,7 @@ public class Constants {
     public static final String DATABASE_USERS = "Users";
     public static final String DATABASE_NAME = "Name";
     public static final String DATABASE_EMAIL = "E-Mail";
+    public static final String DATABASE_DATE = "Date";
     public static final String DATABASE_UNI_ID = "University ID";
     public static final String DATABASE_ADDRESS = "Address";
     public static final String DATABASE_PREFERRED = "Preferred";
@@ -83,12 +102,20 @@ public class Constants {
     public static final String DATABASE_CAR_MODEL = "Car Model";
     public static final String DATABASE_CAR_COLOR = "Car Color";
     public static final String DATABASE_REQUESTS = "Requests";
+    public static final String DATABASE_RESPONSE = "Response";
     public static final String DATABASE_AMOUNT = "Amount";
     public static final String DATABASE_TRIP_RANK = "Trip Rank";
     public static final String DATABASE_PICK_UP_LOCATION = "Pick Up Location";
     public static final String DATABASE_DROP_OFF_LOCATION = "Drop off Location";
     public static final String DATABASE_DISTANCE = "Distance";
     public static final String DATABASE_DURATION = "Duration";
+    public static final String DATABASE_DESCRIPTION = "Description";
+    public static final String DATABASE_REQUEST = "Request";
+    public static final String DATABASE_RATING = "Rating";
+    public static final String DATABASE_NUMBER = "Number of pepole ";
+    public static final String DATABASE_COST = "Cost";
+    public static final String DATABASE_VALUE = "Value";
+    public static final String DATABASE_TRIP_NUMBER = "Trip Number";
 
     //Uni MapSetup:
     public static final Float UNI_MAP_DEFAULT_ZOOM = 17.5f;
@@ -133,7 +160,7 @@ public class Constants {
     }
 
     public static String description(String oirgin, String dest) {
-        return "Ride From : " + oirgin + " to " + dest + " at " + DateTime.now().toString();
+        return "Ride From : " + oirgin + " to " + dest + ":::" + DateTime.now().toString();
     }
 
 }

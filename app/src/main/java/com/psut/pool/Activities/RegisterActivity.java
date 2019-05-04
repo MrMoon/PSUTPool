@@ -77,6 +77,8 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
                 databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Customer) user).toCustomerMap()); //Database writing
                 toMain();   //Update UI
             }
+        } else {
+            return;
         }
     }
 

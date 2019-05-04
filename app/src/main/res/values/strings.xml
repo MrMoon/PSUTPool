@@ -65,6 +65,7 @@
     <string name="showing_recent_rides">Showing Recent Rides</string>
     <string name="ride_history">Ride History</string>
     <string name="confirm_trip">Confirm Trip</string>
+    <string name="deny_trip">Deny Trip</string>
     <string name="look_up">Look-Up</string>
     <string-array name="Spn">
         <item>@string/Anyone</item>

@@ -3,10 +3,14 @@ package com.psut.pool.Models;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.psut.pool.Shared.Constants.DATABASE_AMOUNT;
+import static com.psut.pool.Shared.Constants.DATABASE_DATE;
+import static com.psut.pool.Shared.Constants.DATABASE_DESCRIPTION;
+
 public class Ride {
 
     //Global Variables and Objects:
-    private String description, amount;
+    private String description, amount, date;
     private TripRoute tripRoute;
 
     public String getDescription() {
@@ -21,20 +25,22 @@ public class Ride {
         return tripRoute;
     }
 
-    public Ride(String description, String amount, TripRoute tripRoute) {
+    public Ride(String description, String amount, String date, TripRoute tripRoute) {
         this.description = description;
         this.amount = amount;
         this.tripRoute = tripRoute;
+        this.date = date;
     }
 
-    public Map<String, Object> toRideMap() {
+    private Map<String, Object> toRideMap() {
         HashMap<String, Object> rides = new HashMap<>();
-        rides.put("Discription", description);
-        rides.put("Amount", amount);
+        rides.put(DATABASE_DESCRIPTION, description);
+        rides.put(DATABASE_AMOUNT, amount);
+        rides.put(DATABASE_DATE, date);
         return rides;
     }
 
-    public Map<String, Object> toFullRideMap() {
+    Map<String, Object> toFullRideMap() {
         HashMap<String, Object> fullRide = new HashMap<>();
         fullRide.putAll(toRideMap());
         fullRide.putAll(tripRoute.toRouteMap());

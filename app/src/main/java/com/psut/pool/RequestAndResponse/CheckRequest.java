@@ -39,8 +39,11 @@ public class CheckRequest {
         reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (flag = Objects.requireNonNull(dataSnapshot.child(DATABASE_REQUESTS).getValue()).toString().equalsIgnoreCase(TRUE)) {
-                    Log.d("Driver Request Flag", String.valueOf(flag));
+                System.out.println(dataSnapshot.toString());
+                if (dataSnapshot.exists()) {
+                    if (flag = Objects.requireNonNull(dataSnapshot.child(DATABASE_REQUESTS).getValue()).toString().equalsIgnoreCase(TRUE)) {
+                        Log.d("Driver Request Flag", String.valueOf(flag));
+                    }
                 }
             }
 
