@@ -134,6 +134,7 @@ import static com.psut.pool.Shared.Constants.REQUEST_SENT;
 import static com.psut.pool.Shared.Constants.RESPONSE_DENYED;
 import static com.psut.pool.Shared.Constants.STATUS_DRIVING_MOVING;
 import static com.psut.pool.Shared.Constants.STATUS_DRIVING_STARTING;
+import static com.psut.pool.Shared.Constants.STATUS_DRIVING_WAITING;
 import static com.psut.pool.Shared.Constants.TRUE;
 import static com.psut.pool.Shared.Constants.WENT_WRONG;
 import static com.psut.pool.Shared.Constants.YOU_ARE_HERE;
@@ -273,12 +274,13 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             cardViewConfirmTrip.setVisibility(View.VISIBLE);
                             txtName.setVisibility(View.VISIBLE);
                             txtName.setText("Driver Number: " + Objects.requireNonNull(dataSnapshot.child(DRIVER_PHONE_NUMBER).getValue()).toString());
+                            reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_RESPONSE).setValue(CONFIRMED);
                         } else {
                             Toast.makeText(context, REQUEST_DENYED, Toast.LENGTH_SHORT).show();
                             setupDenyLayout(RESPONSE_DENYED);
                         }
                     } else {
-                        if (dataSnapshot.getValue().toString().equalsIgnoreCase(DENYED)) {
+                        if (Objects.requireNonNull(dataSnapshot.getValue()).toString().equalsIgnoreCase(DENYED)) {
                             Toast.makeText(context, REQUEST_DENYED, Toast.LENGTH_SHORT).show();
                             setupDenyLayout(RESPONSE_DENYED);
                         }
@@ -339,6 +341,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         if (snapshot.exists()) {
                             Toast.makeText(context, "You have a request ", Toast.LENGTH_SHORT).show();
+                            btnConfirmRide.setVisibility(View.VISIBLE);
+                            btnDenyRide.setVisibility(View.VISIBLE);
+                            cardViewCustomerTrip.setVisibility(View.VISIBLE);
+                            cardViewConfirmTrip.setVisibility(View.VISIBLE);
+                            relativeConfirm.setVisibility(View.VISIBLE);
+                            btnConfirmRide.setText(CONFIRM_RIDE);
                             getTripInfo(reference, snapshot.getKey());
                             break;
                         }
@@ -383,6 +391,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     btnConfirmRide.setOnClickListener(v -> {
                         sendResponse(reference, customerID, TRUE, phoneNumber);
                         startTrip(reference, destLatLng);
+                        cardViewCustomerTrip.setVisibility(View.GONE);
+                        map.clear();
                     });
 
                     btnDenyRide.setOnClickListener(v -> {
@@ -574,6 +584,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void sendRequestToDriver(DatabaseReference reference) {
+        responesSet(reference);
         //Data
         String driverIDToSend = driversNameAndID.get(txtName.getText().toString());
         driverID = driversNameAndID.get(txtName.getText().toString());
@@ -594,6 +605,10 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
         btnConfirmRide.setText(DELETE_REQUEST);
         btnConfirmRide.setOnClickListener(v -> denyRequest(reference, txtName.getText().toString()));
+    }
+
+    private void responesSet(DatabaseReference reference) {
+        reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_RESPONSE).setValue(STATUS_DRIVING_WAITING);
     }
 
     private void writeRequestData(DatabaseReference reference, @NonNull String id) {
@@ -690,8 +705,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     private void setupMarkers(GoogleMap googleMap, LatLng latLng, DatabaseReference reference) {
         addPrimaryMarker(googleMap, markerPoints, latLng, reference);
-        relativeConfirm.setVisibility(View.GONE);
-        cardViewConfirmTrip.setVisibility(View.GONE);
+        layoutComponents();
+        setLayout();
         //Markers Set:
         try {
             getLocation();
@@ -719,6 +734,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             Toast.makeText(getActivity(), Constants.JUST_A_MIN, Toast.LENGTH_SHORT).show();
             resetFragment();
         }
+    }
+
+    private void setLayout() {
+        relativeConfirm.setVisibility(View.GONE);
+        cardViewConfirmTrip.setVisibility(View.GONE);
+        btnConfirmRide.setVisibility(View.VISIBLE);
+        txtName.setVisibility(View.VISIBLE);
+        txtCost.setVisibility(View.VISIBLE);
     }
 
     private void addPrimaryMarker(GoogleMap googleMap, @NotNull ArrayList<LatLng> list, LatLng lng, DatabaseReference reference) {
