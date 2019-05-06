@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".Activities.ContactUsActivity"></activity>
+        <activity
+            android:name=".Activities.ContactUsActivity"
+            tools:ignore="InnerclassSeparator" />
         <activity
             android:name=".Activities.HistoryActivity"
             tools:ignore="InnerclassSeparator" />
@@ -46,6 +48,9 @@
             tools:ignore="InnerclassSeparator" />
         <activity
             android:name=".Activities.StartActivity"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Activities.UniPlaces"
             tools:ignore="InnerclassSeparator" />
 
         <meta-data

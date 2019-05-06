@@ -2,6 +2,7 @@ package com.psut.pool.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.psut.pool.Activities.UniPlaces;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 
@@ -30,10 +32,18 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.psut.pool.Shared.Constants.MARKER_ID;
+import static com.psut.pool.Shared.Constants.MARKER_LAYOUT;
+import static com.psut.pool.Shared.Constants.UNI_MAP_BUILDING_B;
+import static com.psut.pool.Shared.Constants.UNI_MAP_BUILDING_D;
+import static com.psut.pool.Shared.Constants.UNI_MAP_KING_ABDULLAH_II_SCHOOL_FOR_ELECTRICAL_ENGINEERING;
+import static com.psut.pool.Shared.Constants.UNI_MAP_KING_HUSSEIN_SCHOOL_FOR_INFORMATION_TECHNOLOGY;
+import static com.psut.pool.Shared.Constants.UNI_MAP_PSUT_EL_HASSAN_LIBRARY;
+
 public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
 
     //Global Variables and Objects:
-    private View view;
+    private View view, defaultView;
     private GoogleMap map;
     private ImageView imgUniMap;
 
@@ -42,11 +52,17 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Global Variables and Objects:
-        view = inflater.inflate(R.layout.fragment_uni_map_tab, null);
-        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Click the image for more info", Toast.LENGTH_SHORT).show();
+        defaultView = inflater.inflate(R.layout.fragment_uni_map_tab, null);
         setupImage();
         getLocationPermission();
-        return view;
+        return defaultView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (imgUniMap.getVisibility() == View.VISIBLE)
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Click the image for more info", Toast.LENGTH_SHORT).show();
     }
 
     //Getting Permissions from the user:
@@ -73,14 +89,13 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
     //Permission Results:
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 9002:
-                if (!(Arrays.toString(grantResults).isEmpty())) {
-                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    intitMap();
+        if (requestCode == 9002) {
+            if (!(Arrays.toString(grantResults).isEmpty())) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    return;
                 }
+                intitMap();
+            }
         }
     }
 
@@ -102,6 +117,28 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
 
         //Markers:
         setUpMarkers(Constants.toLocationMap());
+
+        //Marker Click:
+        setupDepartemntsLayouts();
+    }
+
+    @SuppressLint("InflateParams")
+    private void setupDepartemntsLayouts() {
+        map.setOnMarkerClickListener((marker -> {
+            LatLng markerPosition = marker.getPosition();
+            if (markerPosition.equals(UNI_MAP_BUILDING_B)) {
+                updateUI(R.layout.building_b_layout, R.id.linLayoutBuilingB);
+            } else if (markerPosition.equals(UNI_MAP_BUILDING_D)) {
+                updateUI(R.layout.building_d_layout, R.id.linLayoutBuilingD);
+            } else if (markerPosition.equals(UNI_MAP_KING_ABDULLAH_II_SCHOOL_FOR_ELECTRICAL_ENGINEERING)) {
+                updateUI(R.layout.buliding_eng_layout, R.id.linLayoutEng);
+            } else if (markerPosition.equals(UNI_MAP_KING_HUSSEIN_SCHOOL_FOR_INFORMATION_TECHNOLOGY)) {
+                updateUI(R.layout.building_it_layout, R.id.linLayoutIT);
+            } else if (markerPosition.equals(UNI_MAP_PSUT_EL_HASSAN_LIBRARY)) {
+                updateUI(R.layout.building_hassan_library_layout, R.id.linLayoutHassanLib);
+            }
+            return false;
+        }));
     }
 
     private void setUpBonds() {
@@ -118,7 +155,7 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
         map.setLatLngBoundsForCameraTarget(latLngBounds);
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
         map.setMinZoomPreference(map.getCameraPosition().zoom);
-        moveCamera(Constants.UNI_MAP_MAIN, Constants.UNI_MAP_DEFAULT_ZOOM);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(Constants.UNI_MAP_MAIN, Constants.UNI_MAP_DEFAULT_ZOOM));
     }
 
     private void setUpMarkers(Map<String, LatLng> lngMap) {
@@ -130,12 +167,15 @@ public class UniMapTabFragment extends Fragment implements OnMapReadyCallback {
             });
     }
 
-    private void moveCamera(LatLng latLng, float zoom) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    private void setupImage() {
+        imgUniMap = defaultView.findViewById(R.id.imgUniMapFrag);
+        imgUniMap.setOnClickListener(v -> imgUniMap.setVisibility(View.GONE));
     }
 
-    private void setupImage() {
-        imgUniMap = view.findViewById(R.id.imgUniMapFrag);
-        imgUniMap.setOnClickListener(v -> imgUniMap.setVisibility(View.GONE));
+    private void updateUI(int i, int id) {
+        Intent intent = new Intent(Objects.requireNonNull(getActivity()).getApplicationContext(), UniPlaces.class);
+        intent.putExtra(MARKER_LAYOUT, i);
+        intent.putExtra(MARKER_ID, id);
+        startActivity(intent);
     }
 }

@@ -128,6 +128,7 @@ import static com.psut.pool.Shared.Constants.DESTINATION_LONGITIUDE;
 import static com.psut.pool.Shared.Constants.DRIVER_IS_ON_HIS_WAY;
 import static com.psut.pool.Shared.Constants.DRIVER_PHONE_NUMBER;
 import static com.psut.pool.Shared.Constants.FALSE;
+import static com.psut.pool.Shared.Constants.NO_ROUTE_EXIST;
 import static com.psut.pool.Shared.Constants.REQUEST_CONFIRMED;
 import static com.psut.pool.Shared.Constants.REQUEST_DENYED;
 import static com.psut.pool.Shared.Constants.REQUEST_SENT;
@@ -589,18 +590,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         String driverIDToSend = driversNameAndID.get(txtName.getText().toString());
         driverID = driversNameAndID.get(txtName.getText().toString());
         driverName = txtName.getText().toString();
-
+        //Validating
         if (TextUtils.isEmpty(driverIDToSend)) {
             driverIDToSend = getNearestDriverID();
             txtName.setText(getNearestDriverName());
         }
-
+        //Saving data to Database
         writeTripData(reference, txtName.getText().toString(), uid);
         writeRequestData(reference, Objects.requireNonNull(driverIDToSend));
-
-        Snackbar snackbar = Snackbar.make(view, REQUEST_SENT + txtName.getText().toString(), Snackbar.LENGTH_LONG);
-        snackbar.show();
-
         checkConfirm(reference);
 
         btnConfirmRide.setText(DELETE_REQUEST);
@@ -787,36 +784,29 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                     Leg leg = route.getLegList().get(0);
                                     Info distanceInfo = leg.getDistance();
                                     Info durationInfo = leg.getDuration();
-
                                     //Setting up data
                                     distance = distanceInfo.getText();
                                     duration = durationInfo.getText();
                                     currentLocationName = leg.getStartAddress();
                                     destinationLocationName = leg.getEndAddress();
-
+                                    //Displaying Data
                                     txtPickUpLocationName.setText(currentLocationName);
                                     txtDropOffLocationName.setText(destinationLocationName);
-
                                     //Drawing route
                                     ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
                                     PolylineOptions polylineOptions = DirectionConverter.createPolyline(Objects.requireNonNull(getActivity()),
                                             directionPositionList, 5, Color.RED);
                                     googleMap.addPolyline(polylineOptions);
-
                                     //Bounds
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                     builder.include(origin);
                                     builder.include(destination);
                                     LatLngBounds bounds = builder.build();
-
                                     int width = getResources().getDisplayMetrics().widthPixels;
                                     int height = getResources().getDisplayMetrics().heightPixels;
                                     int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
-
                                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-
                                     map.animateCamera(cu);
-
                                     //Cost
                                     cost = getCost(duration, distance);
                                     if (cost != 0.0) {
@@ -825,13 +815,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                         getCost(duration, distance);
                                         txtCost.setText(cost + " JD");
                                     }
-
                                     break;
                                 case RequestResult.NOT_FOUND:
-                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), Constants.NO_ROUTE_EXIST, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), NO_ROUTE_EXIST, Toast.LENGTH_SHORT).show();
                                     break;
                                 default:
-                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "No", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), WENT_WRONG, Toast.LENGTH_SHORT).show();
                                     Log.d("Status", status);
                                     break;
                             }
@@ -855,7 +844,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = simpleDateFormat.format(new Date());
         rideNumber = getLastRideNumber(reference, id);
-
         //Setting up the Objects
         TripRoute tripRoute = new TripRoute(currentLocationName, destinationLocationName, distance, duration, STATUS_DRIVING_STARTING);
         Ride ride = new Ride(Constants.description(currentLocationName, destinationLocationName), cost + " JD", date, tripRoute);
@@ -886,7 +874,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                databaseError.toException().printStackTrace();
             }
         });
 
@@ -909,7 +897,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         LinkedHashMap<LatLng, Float> driversLocation = new LinkedHashMap<>();  //Location , Distance
         float[] distanceBetweenLocations = new float[1];
         double[] latlng = new double[2];
-
         //Getting Data from the Database
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -922,28 +909,25 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             //Objects
                             int i = 0;
                             String driverID = userSnapshot.getKey();
-
                             //Validating
                             if (Objects.requireNonNull(driverID).equals(uid) || driverID.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
                                 continue;
                             if (Objects.requireNonNull(userSnapshot.child(DATABASE_IS_DRIVER).getValue()).toString().equalsIgnoreCase(FALSE))
                                 continue;
-
                             //Getting Ride Full Info
                             if (!(Objects.requireNonNull(driverID).equals(uid)
                                     && Objects.requireNonNull(userSnapshot.child(DATABASE_IS_DRIVER).getValue()).toString().equalsIgnoreCase(TRUE))) {
+                                //Drivers Locations
                                 for (DataSnapshot locationSnapshot : userSnapshot.child(DATABASE_USER_CURRENT_LOCATION).getChildren()) {
                                     latlng[i++] = Double.valueOf(Objects.requireNonNull(locationSnapshot.getValue()).toString());
                                 }
-
                                 //Setting up the data
                                 String name = Objects.requireNonNull(userSnapshot.child(DATABASE_NAME).getValue()).toString();
                                 String phoneNumber = Objects.requireNonNull(userSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString();
                                 LatLng lng = new LatLng(latlng[0], latlng[1]);
                                 Marker marker = addMarkerToMap(map, lng, bitmapDescriptorFromVector(Objects.requireNonNull(getActivity()).getApplicationContext()), name);
                                 Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, lng.latitude, lng.longitude, distanceBetweenLocations);
-
-                                //Putting data into data structures
+                                //Putting Data into Data Structures
                                 driversLocation.put(lng, distanceBetweenLocations[0]);
                                 driversInfo.put(distanceBetweenLocations[0], driverID);
                                 driversData.put(driversInfo, driversLocation);
@@ -1052,6 +1036,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void writeCustomerInfo(DatabaseReference reference, String id) {
-        reference.child(Objects.requireNonNull(id)).child(DATABASE_REQUESTS).child(String.valueOf(rideNumber)).updateChildren(customerInfo);
+        reference.child(Objects.requireNonNull(id)).child(DATABASE_REQUESTS).child(String.valueOf(rideNumber)).updateChildren(customerInfo).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                //Confirming that the request was
+                Snackbar snackbar = Snackbar.make(view, REQUEST_SENT + txtName.getText().toString(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        });
     }
 }

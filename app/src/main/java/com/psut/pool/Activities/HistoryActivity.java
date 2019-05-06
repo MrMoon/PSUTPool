@@ -38,6 +38,7 @@ import static com.psut.pool.Shared.Constants.DATABASE_TRIP_RANK;
 import static com.psut.pool.Shared.Constants.DATABASE_USERS;
 import static com.psut.pool.Shared.Constants.DRIVER_ID;
 import static com.psut.pool.Shared.Constants.NO_HISTORY;
+import static com.psut.pool.Shared.Constants.PLEASE_RATE_THE_TRIP;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -70,9 +71,6 @@ public class HistoryActivity extends AppCompatActivity {
         relativeHistory.setOnClickListener(v -> finish());
 
         readData(databaseReference);
-        if (flag) {
-            Toast.makeText(this, "Please Rate Trips", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void setupRating(DatabaseReference reference) {
@@ -116,6 +114,10 @@ public class HistoryActivity extends AppCompatActivity {
 
             }
         });
+        if (flag) {
+            Toast.makeText(this, PLEASE_RATE_THE_TRIP, Toast.LENGTH_SHORT).show();
+            setupRating(reference);
+        }
     }
 
     private void setupHistory() {

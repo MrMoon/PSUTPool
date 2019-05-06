@@ -9,4 +9,5 @@
     <color name="startblue">#8B96A2</color>
     <color name="trans">#00000000</color>
     <color name="color2">#113E56</color>
+    <color name="main_text_color">#113e56</color>
 </resources>

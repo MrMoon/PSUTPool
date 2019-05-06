@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_backgroud">
@@ -8,20 +9,56 @@
         android:id="@+id/relativeWallet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:id="@+id/lin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/txtCodeWallet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:hint="@string/enter_code"
+                android:textColor="#113E56"
+                android:textSize="20sp"
+                tools:ignore="Autofill,TextFields" />
+
+            <Button
+                android:id="@+id/btnSubmitCode"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="@color/background"
+                android:text="@string/submit_code"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linLayoutMainWallet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:id="@+id/imgBackArrowWallet"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-                android:textColor="#113E56" />
+                android:textColor="#113E56"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -34,7 +71,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/linLayoutMainWallet"
             android:orientation="vertical"
             android:padding="20dp"
@@ -60,7 +97,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:src="@drawable/ic_monetization_on_black_24dp"
-                    android:textColor="#113E56" />
+                    android:textColor="#113E56"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -82,7 +120,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:src="@drawable/ic_credit_card_black_24dp"
-                    android:textColor="#113E56" />
+                    android:textColor="#113E56"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -114,7 +153,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:src="@drawable/ic_business_center_black_24dp"
-                    android:textColor="#113E56" />
+                    android:textColor="#113E56"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -146,7 +186,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:src="@drawable/ic_account_balance_wallet_black_24dp"
-                    android:textColor="#113E56" />
+                    android:textColor="#113E56"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -158,7 +199,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/txtAccountTypeWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -178,7 +218,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:src="@drawable/ic_spa_black_24dp"
-                    android:textColor="#113E56" />
+                    android:textColor="#113E56"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -200,9 +241,11 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:src="@drawable/ic_add_circle_outline_black_24dp"
-                    android:textColor="#113E56" />
+                    android:textColor="#113E56"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
+                    android:id="@+id/txtAccountTypeWallet"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -210,6 +253,7 @@
                     android:textColor="#113E56"
                     android:textSize="20sp" />
             </LinearLayout>
+
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

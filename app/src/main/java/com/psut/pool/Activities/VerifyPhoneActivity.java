@@ -17,11 +17,15 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Authentication;
-import com.psut.pool.Shared.Constants;
 import com.psut.pool.Shared.Layout;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static com.psut.pool.Shared.Constants.INTENT_PHONE_NUMBER_KEY;
+import static com.psut.pool.Shared.Constants.INVALID_CODE;
+import static com.psut.pool.Shared.Constants.LIMIT_EXCEEDED;
+import static com.psut.pool.Shared.Constants.WENT_WRONG;
 
 public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
 
@@ -45,7 +49,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
 
         //Objects:
         firebaseAuth = FirebaseAuth.getInstance();
-        phoneNumber = getIntent().getStringExtra(Constants.INTENT_PHONE_NUMBER_KEY);
+        phoneNumber = getIntent().getStringExtra(INTENT_PHONE_NUMBER_KEY);
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
             //Checking if user already exists
@@ -64,7 +68,7 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
     public void onClick(View v) {
         if (v == btnConfirm) {
             if (txtCode.getText().toString().isEmpty()) {
-                txtCode.setError(Constants.INVALID_CODE);
+                txtCode.setError(INVALID_CODE);
             } else {
                 verifyPhoneNumberWithCode(verificationID, txtCode.getText().toString());
             }
@@ -72,8 +76,13 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
     }
 
     private void verifyPhoneNumberWithCode(String s, String code) {
-        PhoneAuthCredential authCredential = PhoneAuthProvider.getCredential(s, code);
-        signInWithPhoneAuthCredential(authCredential);
+        try {
+            PhoneAuthCredential authCredential = PhoneAuthProvider.getCredential(s, code);
+            signInWithPhoneAuthCredential(authCredential);
+        } catch (Exception e) {
+            Toast.makeText(this, WENT_WRONG, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     private void verificationCallbacks() {
@@ -89,9 +98,9 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
             @Override
             public void onVerificationFailed(FirebaseException e) {
                 if (e instanceof FirebaseTooManyRequestsException) {
-                    Toast.makeText(VerifyPhoneActivity.this, Constants.LIMIT_EXCEEDED, Toast.LENGTH_LONG).show();
+                    Toast.makeText(VerifyPhoneActivity.this, LIMIT_EXCEEDED, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(VerifyPhoneActivity.this, Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VerifyPhoneActivity.this, WENT_WRONG, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -120,13 +129,13 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
         firebaseAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
                 Intent intent = new Intent(this, RegisterActivity.class);
-                intent.putExtra(Constants.INTENT_PHONE_NUMBER_KEY, phoneNumber);
+                intent.putExtra(INTENT_PHONE_NUMBER_KEY, phoneNumber);
                 Toast.makeText(this, "Your Number is " + phoneNumber, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
                 finish();
             } else {
                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                    txtCode.setError(Constants.INVALID_CODE);
+                    txtCode.setError(INVALID_CODE);
                 } else {
                     Objects.requireNonNull(task.getException()).printStackTrace();
                 }

@@ -67,6 +67,35 @@
     <string name="confirm_trip">Confirm Trip</string>
     <string name="deny_trip">Deny Trip</string>
     <string name="look_up">Look-Up</string>
+    <string name="first_floor">First Floor</string>
+    <string name="queen_rania_center_for_entrepreneurship">Queen Rania Center for Entrepreneurship</string>
+    <string name="mezzanine_floor">Mezzanine Floor</string>
+    <string name="center_consultation_and_training">Center Consultation and Training</string>
+    <string name="second_floor">Second Floor</string>
+    <string name="head_of_ba_department_office_921_922_classrooms">Head of BA Department Office, 921 – 922 Classrooms</string>
+    <string name="third_floor">Third Floor</string>
+    <string name="e_marketing_and_ba_doctors_offices">E-marketing and BA Doctors Offices</string>
+    <string name="building_b">Building B</string>
+    <string name="building_d">Building D</string>
+    <string name="building_b_library">Building B Library</string>
+    <string name="dean_of_business_office_bit_lab">Dean of Business Office, BIT Lab</string>
+    <string name="_821_822_classrooms_accounting_doctors_offices">821+822 Classrooms, Accounting Doctors Offices</string>
+    <string name="fourth_floor">Fourth Floor</string>
+    <string name="_831_832_classrooms_bit_doctors_offices">831+832 Classrooms, BIT Doctors Offices</string>
+    <string name="study_lounge_and_study_rooms">Study Lounge and Study Rooms</string>
+    <string name="reception_book_borrowing">Reception, Book Borrowing</string>
+    <string name="animation_labs_computer_science_doctors_offices_animation_doctors_offices">Animation Labs, Computer Science Doctors Offices, Animation Doctors Offices</string>
+    <string name="fifth_floor">Fifth Floor</string>
+    <string name="software_engineering_doctors_offices">Software Engineering Doctors Offices</string>
+    <string name="_201_208_classes">201–208 Classes</string>
+    <string name="al_sadaqa_theater">Al-Sadaqa Theater</string>
+    <string name="_101_107_labs">101 -107 Labs</string>
+    <string name="_102e_107e">102E -107E</string>
+    <string name="ibn_al_shater_pc_lab_louai_shammout_theater">Ibn Al-Shater, PC-Lab, Louai Shammout Theater</string>
+    <string name="workshop_301_308_342_343_classes">Workshop, 301–308 + 342–343 Classes</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="submit_code">Submit Code</string>
+    <string name="uni_bus">Uni Bus</string>
     <string-array name="Spn">
         <item>@string/Anyone</item>
         <item>@string/female</item>

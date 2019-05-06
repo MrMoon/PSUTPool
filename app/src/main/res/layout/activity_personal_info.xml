@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/graylight"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -71,7 +71,7 @@
                     android:background="@color/trans"
                     android:gravity="center"
                     android:orientation="vertical"
-                    tools:ignore="InefficientWeight">
+                    tools:ignore="InefficientWeight,UselessParent">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        tools:ignore="InefficientWeight,NestedWeights">
+                        tools:ignore="InefficientWeight,NestedWeights,UseCompoundDrawables">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -90,18 +90,25 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_star_black_24dp" />
+                            android:src="@drawable/ic_star_black_24dp"
+                            tools:ignore="ContentDescription" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/txtRankPersonalInfo"
+                    <RatingBar
+                        android:id="@+id/rtbHighScoreHistory"
+                        style="?android:attr/ratingBarStyleSmall"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="10dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/startblue"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:isIndicator="false"
+                        android:max="100"
+                        android:minHeight="10dp"
+                        android:numStars="5"
+                        android:progressTint="#ffba00"
+                        android:rating="0"
+                        android:stepSize="0.2" />
 
                 </LinearLayout>
             </LinearLayout>

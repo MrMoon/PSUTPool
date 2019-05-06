@@ -29,7 +29,8 @@
                 android:text="@string/captain"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                tools:ignore="ButtonStyle" />
 
             <Button
                 android:id="@+id/btnUniMapMainFrag"
@@ -41,7 +42,8 @@
                 android:text="@string/uni_map"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="#113e56" />
+                android:textColor="#113e56"
+                tools:ignore="ButtonStyle" />
 
             <Button
                 android:id="@+id/btnPublicMapMainFrag"
@@ -53,7 +55,22 @@
                 android:text="@string/pub_map"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="#113e56" />
+                android:textColor="#113e56"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/btnUniBusMainFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape_corners_white"
+                android:gravity="center"
+                android:text="@string/uni_bus"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#113e56"
+                android:visibility="gone"
+                tools:ignore="ButtonStyle" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout

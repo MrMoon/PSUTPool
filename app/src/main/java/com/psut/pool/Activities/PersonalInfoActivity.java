@@ -32,9 +32,7 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_info);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
         layoutComponents();
-
         imgBackArrow.setOnClickListener(this);
     }
 
@@ -92,10 +90,8 @@ public class PersonalInfoActivity extends AppCompatActivity implements Layout {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imgBackArrowPersonalInfo:
-                finish();
-                break;
+        if (v.getId() == R.id.imgBackArrowPersonalInfo) {
+            finish();
         }
     }
 }

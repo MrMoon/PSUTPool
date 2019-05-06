@@ -25,7 +25,11 @@ public class Constants {
     public static final Integer LOCATION_PERMISSION_REQUEST_CODE = 9002;
     public static final Integer LOCATION_AUTO_COMPLETE_REQUEST_CODE = 1010;
     public static final String COUNTRY_ID = "jo";
+    public static final String MARKER_LAYOUT = "marker layout";
+    public static final String MARKER_ID = "marker id";
+    public static final String KEY = "Key";
     public static final String API_KEY = "AIzaSyAviOlzcFhIac8VYwlXJ8g__oLjoVlfE2w";
+    public static final String PLEASE_RATE_TRIPS = "Please Rate Trips";
     //Maps:
     public static final Float DEFAULT_ZOOM = 15f;
 
@@ -52,6 +56,7 @@ public class Constants {
     public static final String FALSE = Boolean.valueOf(false).toString();
     public static final String COST_WILL_BE = "Cost Will Be = ";
     public static final String JD = " JD";
+    public static final String SPECIAL = "Special";
     public static final String NO_ROUTE_EXIST = "No routes exist";
     public static final String STATUS_DRIVING_MOVING = "Moving";
     public static final String STATUS_DRIVING_STARTING = "Starting";
@@ -115,38 +120,43 @@ public class Constants {
     public static final String DATABASE_NUMBER = "Number of pepole ";
     public static final String DATABASE_COST = "Cost";
     public static final String DATABASE_VALUE = "Value";
+    public static final String DATABASE_ACCOUNT_TYPE = "Account Type";
     public static final String DATABASE_TRIP_NUMBER = "Trip Number";
 
     //Uni MapSetup:
     public static final Float UNI_MAP_DEFAULT_ZOOM = 17.5f;
     public static final LatLng UNI_MAP_MAIN = new LatLng(32.02324, 35.87611);
-    //Restriction:
-    private static final LatLng UNI_MAP_RESTRICT0 = new LatLng(32.02483, 35.87548);
+    public static final LatLng UNI_MAP_KING_ABDULLAH_II_SCHOOL_FOR_ELECTRICAL_ENGINEERING = new LatLng(32.02331, 35.87672);
     private static final LatLng UNI_MAP_RESTRICT1 = new LatLng(32.02375, 35.87918);
     private static final LatLng UNI_MAP_RESTRICT2 = new LatLng(32.02138, 35.87676);
     private static final LatLng UNI_MAP_RESTRICT3 = new LatLng(32.02301, 35.87337);
     private static final LatLng UNI_MAP_MAIN_ENTRANCE = new LatLng(32.02253, 35.87535);
     private static final LatLng UNI_MAP_STUDENT_AFFAIR = new LatLng(32.02249, 35.87614);
     private static final LatLng UNI_MAP_AL_WAFAA_BUILDING = new LatLng(32.02278, 35.87626);
-    private static final LatLng UNI_MAP_KING_ABDULLAH_II_SCHOOL_FOR_ELECTRICAL_ENGINEERING = new LatLng(32.02331, 35.87672);
+    public static final LatLng UNI_MAP_KING_HUSSEIN_SCHOOL_FOR_INFORMATION_TECHNOLOGY = new LatLng(32.02353, 35.87596);
     private static final LatLng UNI_MAP_PSUT_PRESIDENTIAL_BUILDING = new LatLng(32.02347, 35.87631);
-    private static final LatLng UNI_MAP_KING_HUSSEIN_SCHOOL_FOR_INFORMATION_TECHNOLOGY = new LatLng(32.02353, 35.87596);
-    private static final LatLng UNI_MAP_PSUT_EL_HASSAN_LIBRARY = new LatLng(32.02407, 35.8765);
+    public static final LatLng UNI_MAP_PSUT_EL_HASSAN_LIBRARY = new LatLng(32.02407, 35.8765);
+    public static final LatLng UNI_MAP_BUILDING_B = new LatLng(32.02357, 35.87539);
     private static final LatLng UNI_MAP_IT_ENTER = new LatLng(32.02442, 35.87635);
     private static final LatLng UNI_MAP_ENG_ENTER = new LatLng(32.02191, 35.87646);
+    public static final LatLng UNI_MAP_BUILDING_D = new LatLng(32.02375, 35.87567);
+    //University Map:
+    private static final LatLng UNI_MAP_RESTRICT0 = new LatLng(32.02483, 35.87548);
 
     public static Map<String, LatLng> toLocationMap() {
         HashMap<String, LatLng> places = new HashMap<>();
-        places.put("Main Entrance", Constants.UNI_MAP_MAIN_ENTRANCE);
-        places.put("Princess Sumaya University for Technology", Constants.UNI_MAP_MAIN);
-        places.put("Students Affairs Deanship", Constants.UNI_MAP_STUDENT_AFFAIR);
-        places.put("Al Wafa'a Building", Constants.UNI_MAP_AL_WAFAA_BUILDING);
-        places.put("King Abdullah II School for Electrical Engineering", Constants.UNI_MAP_KING_ABDULLAH_II_SCHOOL_FOR_ELECTRICAL_ENGINEERING);
-        places.put("PSUT Presidential Building", Constants.UNI_MAP_PSUT_PRESIDENTIAL_BUILDING);
-        places.put("King Hussein School for Information Technology", Constants.UNI_MAP_KING_HUSSEIN_SCHOOL_FOR_INFORMATION_TECHNOLOGY);
-        places.put("2nd Entrance", Constants.UNI_MAP_ENG_ENTER);
-        places.put("PSUT El Hassan Library", Constants.UNI_MAP_PSUT_EL_HASSAN_LIBRARY);
-        places.put("IT Entrance", Constants.UNI_MAP_IT_ENTER);
+        places.put("Main Entrance", UNI_MAP_MAIN_ENTRANCE);
+        places.put("Princess Sumaya University for Technology", UNI_MAP_MAIN);
+        places.put("Students Affairs Deanship", UNI_MAP_STUDENT_AFFAIR);
+        places.put("Al Wafa'a Building", UNI_MAP_AL_WAFAA_BUILDING);
+        places.put("King Abdullah II School for Electrical Engineering", UNI_MAP_KING_ABDULLAH_II_SCHOOL_FOR_ELECTRICAL_ENGINEERING);
+        places.put("PSUT Presidential Building", UNI_MAP_PSUT_PRESIDENTIAL_BUILDING);
+        places.put("King Hussein School for Information Technology", UNI_MAP_KING_HUSSEIN_SCHOOL_FOR_INFORMATION_TECHNOLOGY);
+        places.put("2nd Entrance", UNI_MAP_ENG_ENTER);
+        places.put("PSUT El Hassan Library", UNI_MAP_PSUT_EL_HASSAN_LIBRARY);
+        places.put("IT Entrance", UNI_MAP_IT_ENTER);
+        places.put("Builing B", UNI_MAP_BUILDING_B);
+        places.put("Builing D", UNI_MAP_BUILDING_D);
         return places;
     }
 

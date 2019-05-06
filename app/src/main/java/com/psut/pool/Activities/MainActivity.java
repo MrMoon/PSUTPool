@@ -24,6 +24,7 @@ import com.psut.pool.Shared.Layout;
 import java.util.Objects;
 
 import static com.psut.pool.R.drawable.ic_directions_car_black_24dp;
+import static com.psut.pool.Shared.Constants.DATABASE_ACCOUNT_TYPE;
 import static com.psut.pool.Shared.Constants.DATABASE_IS_DRIVER;
 import static com.psut.pool.Shared.Constants.DATABASE_USERS;
 
@@ -32,8 +33,7 @@ public class MainActivity extends AppCompatActivity implements Layout {
     //Global Variables and Objects:
     private ImageView imgCar, imgOffer, imgNotification, imgAccount;
     private Fragment fragmentMainTab, fragmentOfferTab, fragmentNofitication, fragmentProfile;
-    private static String isDriver;
-    private static DatabaseReference databaseReference;
+    private static String isDriver, accountType;
 
     public static String getIsDriver() {
         return isDriver;
@@ -43,7 +43,15 @@ public class MainActivity extends AppCompatActivity implements Layout {
         MainActivity.isDriver = isDriver;
     }
 
-    public static void isDriver() {
+    public static String getAccountType() {
+        return accountType;
+    }
+
+    public static void setAccountType(String accountType) {
+        MainActivity.accountType = accountType;
+    }
+
+    public static void isDriver(DatabaseReference databaseReference) {
         databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .child(DATABASE_IS_DRIVER)
                 .addValueEventListener(new ValueEventListener() {
@@ -70,11 +78,30 @@ public class MainActivity extends AppCompatActivity implements Layout {
         Objects.requireNonNull(getSupportActionBar()).hide();
 
         //Objects:
-        databaseReference = FirebaseDatabase.getInstance().getReference().child(DATABASE_USERS);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(DATABASE_USERS);
 
         layoutComponents();
         setupFragments();
-        isDriver();
+        isDriver(databaseReference);
+        setupAccountType(databaseReference);
+    }
+
+    private void setupAccountType(DatabaseReference reference) {
+        reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(DATABASE_ACCOUNT_TYPE).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    accountType = Objects.requireNonNull(dataSnapshot.getValue()).toString();
+                } else {
+                    reference.setValue("0");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
