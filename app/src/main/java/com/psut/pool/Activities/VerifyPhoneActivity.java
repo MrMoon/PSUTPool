@@ -1,5 +1,6 @@
 package com.psut.pool.Activities;
 
+import android.accounts.NetworkErrorException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -80,7 +81,11 @@ public class VerifyPhoneActivity extends AppCompatActivity implements Layout {
             PhoneAuthCredential authCredential = PhoneAuthProvider.getCredential(s, code);
             signInWithPhoneAuthCredential(authCredential);
         } catch (Exception e) {
-            Toast.makeText(this, WENT_WRONG, Toast.LENGTH_SHORT).show();
+            if(e instanceof NetworkErrorException){
+                Toast.makeText(this, "Check Your Internet Connnection", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, WENT_WRONG, Toast.LENGTH_SHORT).show();
+            }
             e.printStackTrace();
         }
     }

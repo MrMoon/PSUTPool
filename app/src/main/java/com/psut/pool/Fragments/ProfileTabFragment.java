@@ -40,9 +40,8 @@ public class ProfileTabFragment extends Fragment implements Layout {
     private View view;
     private TextView txtPersonalInfo, txtMyRides, txtWallet, txtLogOut, txtStartDriving, txtContactUs;
     private Switch switchIsDriving;
-    private User user;
     private String uid;
-    private boolean isDriver, isDriving;
+    private boolean isDriver;
 
 
     @SuppressLint("InflateParams")
@@ -163,6 +162,7 @@ public class ProfileTabFragment extends Fragment implements Layout {
 
     private void logout() {
         //Check User type:
+        User user;
         if (isDriver) {
             user = new Driver(Constants.STATUS_USER_OFFLINE);
         } else {

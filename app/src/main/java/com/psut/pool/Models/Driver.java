@@ -33,6 +33,8 @@ public class Driver extends User {
         super(curruntLatitude, curruntLongitude);
     }
 
+
+
     public Map<String, Object> toDriverMap() {
         return toUserObjectMap(Constants.DATABASE_DRIVER_CAR_ID, carID);
     }
@@ -52,9 +54,8 @@ public class Driver extends User {
         return cars;
     }
 
-    public Map<String, Object> toDriverLocations(Object id) {
-        HashMap<String, Object> driverLocations = new HashMap<>(toUserLocationMap());
-        driverLocations.put("ID", id.toString());
-        return driverLocations;
+    public Map<String, Object> toDriverLocations() {
+        //        driverLocations.put("ID", id.toString());
+        return new HashMap<>(toUserLocationMap());
     }
 }

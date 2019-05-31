@@ -93,13 +93,13 @@ public class MainActivity extends AppCompatActivity implements Layout {
                 if (dataSnapshot.exists()) {
                     accountType = Objects.requireNonNull(dataSnapshot.getValue()).toString();
                 } else {
-                    reference.setValue("0");
+                    reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(DATABASE_ACCOUNT_TYPE).setValue("0");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                databaseError.toException().printStackTrace();
             }
         });
     }

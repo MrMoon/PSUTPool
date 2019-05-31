@@ -1,5 +1,6 @@
 package com.psut.pool.Models;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Customer extends User {
@@ -8,6 +9,10 @@ public class Customer extends User {
 
     public Customer() {
 
+    }
+
+    public Customer(String curruntLatitude, String curruntLongitude) {
+        super(curruntLatitude, curruntLongitude);
     }
 
     public Customer(String status) {
@@ -26,5 +31,10 @@ public class Customer extends User {
 
     public Map<String, Object> toCustomerMap() {
         return toUserObjectMap("Account Type", accountType);
+    }
+
+    public Map<String, Object> toCustomerLocationMap() {
+        //        driverLocations.put("ID", id.toString());
+        return new HashMap<>(toUserLocationMap());
     }
 }

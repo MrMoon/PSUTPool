@@ -5,8 +5,10 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +18,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,18 +34,18 @@ import com.psut.pool.Shared.Layout;
 
 import java.util.Objects;
 
+import static com.psut.pool.Shared.Constants.FALSE;
+import static com.psut.pool.Shared.Constants.TRUE;
+
 public class RegisterActivity extends AppCompatActivity implements Layout {
 
     //Global Variables and Objects:
     private EditText txtName, txtEmail, txtID, txtPhoneNumber, txtAddress, txtCarID, txtCarType, txtCarModel, txtCarColor;
     private Button btnSignUp;
     private Spinner spinnerPreferred;
-    private RadioGroup radioGroupGender;
-    private RadioButton radioBtnMale, radioBtnFemale;
-    private Switch isDriverSwitch;
     private DatabaseReference databaseReference;
-    private String phoneNumber, preferred, name, uniID, address, email, gender, carID, cartype, carModel, carColor;
-    private boolean isVerified, isDriver;
+    private String phoneNumber, preferred, name, uniID, address, email, gender, carID, carType, carModel, carColor;
+    private boolean isDriver;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -49,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        Authentication.isVerified(FirebaseAuth.getInstance().getCurrentUser().getUid(), this);
+        Authentication.isVerified(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), this);
         layoutComponents();
 
         //Getting phone number from previous intent:
@@ -59,22 +63,29 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         //Firebase Objects:
         databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
 
-        btnSignUp.setOnClickListener(v -> registerUser());
+        btnSignUp.setOnClickListener(v -> registerUser(databaseReference));
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    private void registerUser() {
+    private void registerUser(DatabaseReference reference) {
         if (isValid()) {
             //User Object:
             User user;
             if (isDriver) {
-                Car car = new Car(cartype, carModel, carColor);
-                user = new Driver(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", txtCarID.getText().toString(), car);
-                databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Driver) user).toFullDriverMap()); //Database writing
+                Car car = new Car(carType, carModel, carColor);
+                user = new Driver(name, email, uniID, phoneNumber, address, preferred, gender, TRUE , "Online", txtCarID.getText().toString(), car);
+                reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Driver) user).toFullDriverMap())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) Log.d("Register Tag", "Register User done successfully");
+                }); //Database writing
                 toMain();   //Update UI
             } else {
-                user = new Customer(name, email, uniID, phoneNumber, address, preferred, gender, Boolean.toString(isDriver), "Online", "0");
-                databaseReference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Customer) user).toCustomerMap()); //Database writing
+                user = new Customer(name, email, uniID, phoneNumber, address, preferred, gender, FALSE, "Online", " ");
+                reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).updateChildren(((Customer) user).toCustomerMap())
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful())
+                                Log.d("Register Tag", "Register User done successfully");
+                        }); //Database writing
                 toMain();   //Update UI
             }
         } else {
@@ -141,10 +152,10 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
         txtCarModel = findViewById(R.id.txtCarModelRegister);
         btnSignUp = findViewById(R.id.btnSignUpRegister);
         spinnerPreferred = findViewById(R.id.spinnerPreferredDriverRegister);
-        radioGroupGender = findViewById(R.id.radioGroupGendersRegister);
-        radioBtnMale = findViewById(R.id.radioBtnMaleRegister);
-        radioBtnFemale = findViewById(R.id.radioBtnFemaleRegister);
-        isDriverSwitch = findViewById(R.id.switchDriverRegister);
+        RadioGroup radioGroupGender = findViewById(R.id.radioGroupGendersRegister);
+        RadioButton radioBtnMale = findViewById(R.id.radioBtnMaleRegister);
+        RadioButton radioBtnFemale = findViewById(R.id.radioBtnFemaleRegister);
+        Switch isDriverSwitch = findViewById(R.id.switchDriverRegister);
         isDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isDriver = isChecked;
             if (!isChecked) {
@@ -176,7 +187,7 @@ public class RegisterActivity extends AppCompatActivity implements Layout {
             carColor = txtCarColor.getText().toString();
             carModel = txtCarModel.getText().toString();
             carID = txtCarID.getText().toString();
-            cartype = txtCarType.getText().toString();
+            carType = txtCarType.getText().toString();
         }
     }
 

@@ -43,6 +43,8 @@ abstract public class User {
         this.curruntLongitude = curruntLongitude;
     }
 
+
+
     public User(String curruntLatitude, String curruntLongitude) {
         this.curruntLatitude = curruntLatitude;
         this.curruntLongitude = curruntLongitude;
@@ -50,42 +52,6 @@ abstract public class User {
 
     public String getName() {
         return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getUniID() {
-        return uniID;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPreferred() {
-        return preferred;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getIsDriver() {
-        return isDriver;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getCurruntLatitude() {
-        return curruntLatitude;
     }
 
     public void setCurruntLatitude(String curruntLatitude) {

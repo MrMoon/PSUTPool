@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.psut.pool.Adapters.RidehistoryAdapter;
+import com.psut.pool.Models.History;
 import com.psut.pool.Models.Rating;
 import com.psut.pool.Models.RidehistoryModel;
 import com.psut.pool.R;
@@ -85,7 +86,7 @@ public class HistoryActivity extends AppCompatActivity {
                 if (flag) {
                     linearLayout.setVisibility(View.VISIBLE);
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        //Data
+                        //Data:
                         String pickUpLocationName = Objects.requireNonNull(snapshot.child(DATABASE_PICK_UP_LOCATION).getValue()).toString();
                         pickUpLocationName = pickUpLocationName.substring(0, pickUpLocationName.indexOf("Jordan"));
                         String dropOffLocationName = Objects.requireNonNull(snapshot.child(DATABASE_DROP_OFF_LOCATION).getValue()).toString();
@@ -93,15 +94,14 @@ public class HistoryActivity extends AppCompatActivity {
                         String date = Objects.requireNonNull(snapshot.child(DATABASE_DATE).getValue()).toString();
                         String price = Objects.requireNonNull(snapshot.child(DATABASE_AMOUNT).getValue()).toString();
                         String driverID = Objects.requireNonNull(snapshot.child(DRIVER_ID).getValue()).toString();
-
                         //Lists
                         pickUpLocationsNames.add(pickUpLocationName);
                         dropOffLocationsNames.add(dropOffLocationName);
                         dates.add(date);
                         prices.add(price);
                         driverIDs.add(driverID);
-
                         setupHistory();
+
                     }
                 } else {
                     txtNonHistory.setVisibility(View.VISIBLE);

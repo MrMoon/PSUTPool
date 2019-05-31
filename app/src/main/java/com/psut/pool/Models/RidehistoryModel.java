@@ -1,9 +1,5 @@
 package com.psut.pool.Models;
 
-/**
- * Created by wolfsoft4 on 15/9/18.
- */
-
 public class RidehistoryModel {
 
     Integer i1, i2, i3;
