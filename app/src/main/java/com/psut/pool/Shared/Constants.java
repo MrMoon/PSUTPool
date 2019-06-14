@@ -66,6 +66,7 @@ public class Constants {
     public static final String STATUS_USER_ONILINE = "Online";
     public static final String NO_HISTORY = "No History Was Found";
     public static final String PLEASE_RATE_THE_TRIP = "Please Rate The Trip";
+    public static final String YOU_HAVE_REQUEST = "You have a request";
 
     //Requests:
     public static final String CUSTOMER_ID = "Customer ID";

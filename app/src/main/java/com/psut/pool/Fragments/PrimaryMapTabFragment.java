@@ -315,11 +315,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             //Markers
             map.setOnMapClickListener(latLng -> setupMarkers(map, latLng, databaseReference));
 
-            if (isDriver) {
-                checkRequest(databaseReference);
-            } else {
-                checkConfirm(databaseReference);
-            }
+            if (isDriver) checkRequest(databaseReference);
+            else checkConfirm(databaseReference);
+
 
             getDrivers(databaseReference);
 
@@ -342,9 +340,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             btnConfirmRide.setVisibility(View.VISIBLE);
                             btnDenyRide.setVisibility(View.VISIBLE);
                             cardViewCustomerTrip.setVisibility(View.VISIBLE);
+                            btnConfirmRide.setText(CONFIRM_RIDE);
                             cardViewConfirmTrip.setVisibility(View.VISIBLE);
                             relativeConfirm.setVisibility(View.VISIBLE);
-                            btnConfirmRide.setText(CONFIRM_RIDE);
                             getTripInfo(reference, snapshot.getKey());
                             break;
                         }
@@ -365,7 +363,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-//                    //Data
+                    //Data
                     String customerID = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_ID).getValue()).toString();
                     String customerName = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_NAME).getValue()).toString();
                     String customerPickUpLocationName = Objects.requireNonNull(dataSnapshot.child(CUSTOMER_CURRENT_LOCATION_PICKUP_NAME).getValue()).toString();
@@ -381,7 +379,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     LatLng destLatLng = new LatLng(Double.valueOf(customerDestLat), Double.valueOf(customerDestLon));
 
                     //Layout
-                    setupRequestLayout(View.VISIBLE);
+                    setupRequestLayout();
                     txtPickUpLocationName.setText(customerPickUpLocationName);
                     txtDropOffLocationName.setText(customerDropOffLocationName);
                     txtName.setText(customerName);
@@ -409,11 +407,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         });
     }
 
-    private void setupRequestLayout(int value) {
-        cardViewCustomerTrip.setVisibility(value);
-        relativeConfirm.setVisibility(value);
-        cardViewConfirmTrip.setVisibility(value);
-        btnDenyRide.setVisibility(value);
+    private void setupRequestLayout() {
+        cardViewCustomerTrip.setVisibility(View.VISIBLE);
+        relativeConfirm.setVisibility(View.VISIBLE);
+        cardViewConfirmTrip.setVisibility(View.VISIBLE);
+        btnDenyRide.setVisibility(View.VISIBLE);
     }
 
     private void sendResponse(DatabaseReference reference, String customerID, String value, String phoneNumber) {
@@ -928,7 +926,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                 }
                                 //Setting up the data
                                 String name = Objects.requireNonNull(userSnapshot.child(DATABASE_NAME).getValue()).toString();
-                                String phoneNumber = Objects.requireNonNull(userSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString();
+                                //String phoneNumber = Objects.requireNonNull(userSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString();
                                 LatLng lng = new LatLng(latlng[0], latlng[1]);
                                 Marker marker = addMarkerToMap(map, lng, bitmapDescriptorFromVector(Objects.requireNonNull(getActivity()).getApplicationContext()), name);
                                 Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, lng.latitude, lng.longitude, distanceBetweenLocations);
