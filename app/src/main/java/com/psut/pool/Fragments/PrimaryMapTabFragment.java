@@ -67,20 +67,9 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 import com.psut.pool.Activities.MainActivity;
-import com.psut.pool.Models.Customer;
-import com.psut.pool.Models.Driver;
-import com.psut.pool.Models.Rating;
-import com.psut.pool.Models.Ride;
-import com.psut.pool.Models.Trip;
-import com.psut.pool.Models.TripRoute;
-import com.psut.pool.Models.User;
+import com.psut.pool.Models.*;
 import com.psut.pool.R;
 import com.psut.pool.Shared.Constants;
 
@@ -123,8 +112,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     @SuppressLint("InflateParams")
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_captain_tab, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater , @Nullable ViewGroup container , @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_captain_tab , container , false);
         layoutComponents();
         initObj();
         startMapSetUp();
@@ -134,16 +123,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private void initObj() {
         try {
             Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException e) { e.printStackTrace(); }
         markerPoints = new ArrayList<>();
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
         databaseReference = FirebaseDatabase.getInstance().getReference().child(Constants.DATABASE_USERS);
         uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         isDriver = Boolean.parseBoolean(MainActivity.getIsDriver());
         if (!Places.isInitialized())
-            Places.initialize(Objects.requireNonNull(getActivity()).getApplicationContext(), API_KEY);
+            Places.initialize(Objects.requireNonNull(getActivity()).getApplicationContext() , API_KEY);
     }
 
     private void startMapSetUp() {
@@ -151,12 +138,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             intitMap();
         } else {
             getLocationPermission();
-            Toast.makeText(context, "Please Give the app the Permissions", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context , "Please Give the app the Permissions" , Toast.LENGTH_SHORT).show();
         }
     }
 
     private boolean getLocationPermission() {  //Getting Permissions from the user
-        permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+        permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION ,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()).getApplicationContext()
                 , Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -177,9 +164,9 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {   //Permission Results
+    public void onRequestPermissionsResult(int requestCode , @NonNull String[] permissions , @NonNull int[] grantResults) {   //Permission Results
         isPermissionGranted = false;
-        if (requestCode == 9002) {
+        if (requestCode == 9002)
             if (!(Arrays.toString(grantResults).isEmpty())) {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     isPermissionGranted = false;
@@ -188,7 +175,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 isPermissionGranted = true;
                 intitMap();
             }
-        }
     }
 
     private void intitMap() {   //Assigning map to the fragment
@@ -200,12 +186,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onStart() {
         super.onStart();
-
-        if (isDriver) {
-            checkRequest(databaseReference);
-        } else {
-            checkConfirm(databaseReference);
-        }
+        if (isDriver) checkRequest(databaseReference);
+        else checkConfirm(databaseReference);
     }
 
     private void checkConfirm(DatabaseReference reference) {
@@ -216,7 +198,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.child(DATABASE_VALUE).exists()) {
                         if (Objects.requireNonNull(dataSnapshot.child(DATABASE_VALUE).getValue()).toString().equalsIgnoreCase(TRUE)) {
-                            Toast.makeText(context, REQUEST_CONFIRMED + " " + DRIVER_IS_ON_HIS_WAY, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context , REQUEST_CONFIRMED + " " + DRIVER_IS_ON_HIS_WAY , Toast.LENGTH_SHORT).show();
                             btnDenyRide.setVisibility(GONE);
                             btnConfirmRide.setVisibility(GONE);
                             relativeConfirm.setVisibility(View.VISIBLE);
@@ -225,12 +207,12 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             txtName.setText("Driver Number: " + Objects.requireNonNull(dataSnapshot.child(DRIVER_PHONE_NUMBER).getValue()).toString());
                             reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_RESPONSE).setValue(CONFIRMED);
                         } else {
-                            Toast.makeText(context, REQUEST_DENYED, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context , REQUEST_DENYED , Toast.LENGTH_SHORT).show();
                             setupDenyLayout(RESPONSE_DENYED);
                         }
                     } else {
                         if (Objects.requireNonNull(dataSnapshot.getValue()).toString().equalsIgnoreCase(DENYED)) {
-                            Toast.makeText(context, REQUEST_DENYED, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context , REQUEST_DENYED , Toast.LENGTH_SHORT).show();
                             setupDenyLayout(RESPONSE_DENYED);
                         }
                     }
@@ -248,7 +230,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d("Map", "Map is Ready");
+        Log.d("Map" , "Map is Ready");
 
         //Re-Checking the permissions
         if (isPermissionGranted) {
@@ -264,7 +246,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             setupMap(map , databaseReference);
 
             //Markers
-            map.setOnMapClickListener(latLng -> setupMarkers(map, latLng, databaseReference));
+            map.setOnMapClickListener(latLng -> setupMarkers(map , latLng , databaseReference));
 
             if (isDriver) checkRequest(databaseReference);
             else checkConfirm(databaseReference);
@@ -273,7 +255,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             getDrivers(databaseReference);
 
             //Trip Setup
-            btnRoute.setOnClickListener(v -> startFullTripSetup(map, currentLatLng, destination, databaseReference));
+            btnRoute.setOnClickListener(v -> startFullTripSetup(map , currentLatLng , destination , databaseReference));
 
         } else {
             getLocationPermission();
@@ -287,14 +269,14 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         if (snapshot.exists()) {
-                            Toast.makeText(context, "You have a request ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context , "You have a request " , Toast.LENGTH_SHORT).show();
                             btnConfirmRide.setVisibility(View.VISIBLE);
                             btnDenyRide.setVisibility(View.VISIBLE);
                             cardViewCustomerTrip.setVisibility(View.VISIBLE);
                             btnConfirmRide.setText(CONFIRM_RIDE);
                             cardViewConfirmTrip.setVisibility(View.VISIBLE);
                             relativeConfirm.setVisibility(View.VISIBLE);
-                            getTripInfo(reference, snapshot.getKey());
+                            getTripInfo(reference , snapshot.getKey());
                             break;
                         }
                     }
@@ -308,7 +290,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         });
     }
 
-    private void getTripInfo(DatabaseReference reference, String key) {
+    private void getTripInfo(DatabaseReference reference , String key) {
         reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(DATABASE_REQUESTS).child(key).addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -326,8 +308,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     String cost = Objects.requireNonNull(dataSnapshot.child(DATABASE_COST).getValue()).toString();
                     String phoneNumber = Objects.requireNonNull(Objects.requireNonNull(dataSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString());
 
-                    LatLng customerLatLng = new LatLng(Double.valueOf(customerLocationLat), Double.valueOf(customerLocationLon));
-                    LatLng destLatLng = new LatLng(Double.valueOf(customerDestLat), Double.valueOf(customerDestLon));
+                    LatLng customerLatLng = new LatLng(Double.valueOf(customerLocationLat) , Double.valueOf(customerLocationLon));
+                    LatLng destLatLng = new LatLng(Double.valueOf(customerDestLat) , Double.valueOf(customerDestLon));
 
                     //Layout
                     setupRequestLayout();
@@ -337,15 +319,15 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     txtCost.setText(cost + " JD");
 
                     btnConfirmRide.setOnClickListener(v -> {
-                        sendResponse(reference, customerID, TRUE, phoneNumber);
-                        startTrip(reference, destLatLng);
+                        sendResponse(reference , customerID , TRUE , phoneNumber);
+                        startTrip(reference , destLatLng);
                         cardViewCustomerTrip.setVisibility(GONE);
                         map.clear();
                     });
 
                     btnDenyRide.setOnClickListener(v -> {
-                        sendResponse(reference, customerID, DENYED);
-                        setupTripLayout(map, reference);
+                        sendResponse(reference , customerID , DENYED);
+                        setupTripLayout(map , reference);
                         reference.child(uid).child(DATABASE_REQUESTS).setValue(FALSE);
                     });
                 }
@@ -365,25 +347,23 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         btnDenyRide.setVisibility(View.VISIBLE);
     }
 
-    private void sendResponse(DatabaseReference reference, String customerID, String value, String phoneNumber) {
-        reference.child(customerID).child(DATABASE_RESPONSE).updateChildren(toResponesMap(value, phoneNumber)).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) Log.d("Primary Map Tag" , "Respones Done Successfully");
-        });
+    private void sendResponse(DatabaseReference reference , String customerID , String value , String phoneNumber) {
+        reference.child(customerID).child(DATABASE_RESPONSE).updateChildren(toResponesMap(value , phoneNumber));
         reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_REQUESTS).setValue(CONFIRMED);
     }
 
-    private void sendResponse(DatabaseReference reference, String customerID, String value) {
+    private void sendResponse(DatabaseReference reference , String customerID , String value) {
         reference.child(customerID).child(DATABASE_RESPONSE).setValue(DENYED);
     }
 
-    private Map<String, Object> toResponesMap(String value, String phoneNumber) {
+    private Map<String, Object> toResponesMap(String value , String phoneNumber) {
         HashMap<String, Object> respones = new HashMap<>();
-        respones.put(DATABASE_VALUE, value);
-        respones.put(DRIVER_PHONE_NUMBER, phoneNumber);
+        respones.put(DATABASE_VALUE , value);
+        respones.put(DRIVER_PHONE_NUMBER , phoneNumber);
         return respones;
     }
 
-    private void startTrip(DatabaseReference reference, LatLng dest) {
+    private void startTrip(DatabaseReference reference , LatLng dest) {
         cardViewConfirmTrip.setVisibility(GONE);
         cardViewConfirmTrip.setVisibility(GONE);
         relativeConfirm.setVisibility(GONE);
@@ -394,7 +374,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     private void launchGoogleMaps(LatLng dest) {
         String URL = "https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=" + dest.latitude + "," + dest.longitude;
         Uri location = Uri.parse(URL);
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW , location);
         startActivity(mapIntent);
     }
 
@@ -408,30 +388,27 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     private void setupAutoCompleteSearch() {
         cardViewSearch.setOnClickListener(v -> {
-            // Set the fields to specify which types of place data to return.
-            List<com.google.android.libraries.places.api.model.Place.Field> fields = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID,
+            // Set the fields to specify which types of place data to return
+            List<com.google.android.libraries.places.api.model.Place.Field> fields = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID ,
                     com.google.android.libraries.places.api.model.Place.Field.NAME);
 
-            // Start the autocomplete intent.
+            // Start the autocomplete intent
             Intent intent = new Autocomplete.IntentBuilder(
-                    AutocompleteActivityMode.FULLSCREEN, fields).setCountry(Constants.COUNTRY_ID)
+                    AutocompleteActivityMode.FULLSCREEN , fields).setCountry(Constants.COUNTRY_ID)
                     .build(Objects.requireNonNull(getActivity()).getApplicationContext());
-            startActivityForResult(intent, Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE);
+            startActivityForResult(intent , Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE);
         });
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE) {
+    public void onActivityResult(int requestCode , int resultCode , Intent data) {
+        super.onActivityResult(requestCode , resultCode , data);
+        if (requestCode == Constants.LOCATION_AUTO_COMPLETE_REQUEST_CODE)
             if (resultCode == Activity.RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 System.out.println(place.getName());
                 geoLocation(place.getName());
-            } else {
-                System.out.println(PlaceAutocomplete.getStatus(Objects.requireNonNull(getActivity()).getApplicationContext(), data));
             }
-        }
     }
 
     //Search Results
@@ -439,23 +416,21 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         Geocoder geocoder = new Geocoder(getActivity());
         List<Address> addresses = new ArrayList<>();
         try {
-            addresses = (geocoder.getFromLocationName(s, 1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            addresses = (geocoder.getFromLocationName(s , 1));
+        } catch (Exception e) { e.printStackTrace(); }
 
         if (!(addresses.isEmpty())) {
             Address address = addresses.get(0);
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()));
+            moveCamera(new LatLng(address.getLatitude() , address.getLongitude()));
         }
     }
 
     private void currentLocationButton() {
         View locationButton = ((View) view.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        layoutParams.setMargins(0, 180, 180, 0);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT , 0);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM , RelativeLayout.TRUE);
+        layoutParams.setMargins(0 , 180 , 180 , 0);
     }
 
     @SuppressLint("MissingPermission")
@@ -481,15 +456,15 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 //Permission isn't granted:
                 if (!((LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE)))
                         .isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    Toast.makeText(getActivity(), Constants.TRUN_LOCATION_ON, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity() , Constants.TRUN_LOCATION_ON , Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                if (ActivityCompat.checkSelfPermission(getActivity() , Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                        && ActivityCompat.checkSelfPermission(getActivity() , Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(permissions, Constants.LOCATION_PERMISSION_REQUEST_CODE);
+                    requestPermissions(permissions , Constants.LOCATION_PERMISSION_REQUEST_CODE);
                     return;
                 }
 
@@ -501,13 +476,13 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                         currentLocation = task.getResult();
                         //Getting current Location:
                         if (currentLocation != null) {
-                            currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                            writeUserData(reference, currentLatLng);
+                            currentLatLng = new LatLng(currentLocation.getLatitude() , currentLocation.getLongitude());
+                            writeUserData(reference , currentLatLng);
                         } else {
-                            Toast.makeText(getActivity(), "Null", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity() , "Null" , Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getActivity(), Constants.WENT_WRONG, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity() , Constants.WENT_WRONG , Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -517,19 +492,17 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void startFullTripSetup(GoogleMap googleMap, LatLng origin, LatLng destinationLatLng, DatabaseReference reference) {
-        getDestinationInfo(googleMap, reference, destinationLatLng, origin);
+    private void startFullTripSetup(GoogleMap googleMap , LatLng origin , LatLng destinationLatLng , DatabaseReference reference) {
+        getDestinationInfo(googleMap , reference , destinationLatLng , origin);
         setDriverName(reference);
         setupConfirm(reference);
-        setupTripLayout(googleMap, reference);
+        setupTripLayout(googleMap , reference);
         btnConfirmRide.setOnClickListener(v -> sendRequestToDriver(reference));
     }
 
     @SuppressLint("SetTextI18n")
     private void setupConfirm(DatabaseReference reference) {
-        if (TextUtils.isEmpty(txtName.getText().toString())) {
-            setDriverName(reference);
-        }
+        if (TextUtils.isEmpty(txtName.getText().toString())) setDriverName(reference);
     }
 
     private void sendRequestToDriver(DatabaseReference reference) {
@@ -544,65 +517,56 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             txtName.setText(getNearestDriverName());
         }
         //Saving data to Database
-        writeTripData(reference, txtName.getText().toString(), uid);
-        writeRequestData(reference, Objects.requireNonNull(driverIDToSend));
+        writeTripData(reference , txtName.getText().toString() , uid);
+        writeRequestData(reference , Objects.requireNonNull(driverIDToSend));
         checkConfirm(reference);
 
         btnConfirmRide.setText(DELETE_REQUEST);
-        btnConfirmRide.setOnClickListener(v -> denyRequest(reference, txtName.getText().toString()));
+        btnConfirmRide.setOnClickListener(v -> denyRequest(reference , txtName.getText().toString()));
     }
 
-    private void responesSet(DatabaseReference reference) {
-        reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_RESPONSE).setValue(STATUS_DRIVING_WAITING);
-    }
+    private void responesSet(DatabaseReference reference) { reference.getRoot().child(DATABASE_USERS).child(uid).child(DATABASE_RESPONSE).setValue(STATUS_DRIVING_WAITING); }
 
-    private void writeRequestData(DatabaseReference reference, @NonNull String id) {
-        getUserName(reference, uid, id);
-    }
+    private void writeRequestData(DatabaseReference reference , @NonNull String id) { getUserName(reference , uid , id); }
 
     private HashMap<String, Object> getCustomerInfo() {
         HashMap<String, Object> customerInfo = new HashMap<>();
-        customerInfo.put(CUSTOMER_ID, uid);
-        customerInfo.put(CUSTOMER_NAME, userName);
-        customerInfo.put(CUSTOMER_CURRENT_LOCATION_PICKUP_NAME, currentLocationName);
-        customerInfo.put(CUSTOMER_CURRENT_LOCATION_DROP_NAME, destinationLocationName);
-        customerInfo.put(CUSTOMER_CURRENT_LATITUDE, currentLatLng.latitude);
-        customerInfo.put(CUSTOMER_CURRENT_LONGITIUDE, currentLatLng.longitude);
-        customerInfo.put(DESTINATION_LATITUDE, destination.latitude);
-        customerInfo.put(DESTINATION_LONGITIUDE, destination.longitude);
-        customerInfo.put(DATABASE_COST, cost);
-        customerInfo.put(DATABASE_REQUEST, TRUE);
-        customerInfo.put(DATABASE_PHONE_NUMBER, phoneNumber);
+        customerInfo.put(CUSTOMER_ID , uid);
+        customerInfo.put(CUSTOMER_NAME , userName);
+        customerInfo.put(CUSTOMER_CURRENT_LOCATION_PICKUP_NAME , currentLocationName);
+        customerInfo.put(CUSTOMER_CURRENT_LOCATION_DROP_NAME , destinationLocationName);
+        customerInfo.put(CUSTOMER_CURRENT_LATITUDE , currentLatLng.latitude);
+        customerInfo.put(CUSTOMER_CURRENT_LONGITIUDE , currentLatLng.longitude);
+        customerInfo.put(DESTINATION_LATITUDE , destination.latitude);
+        customerInfo.put(DESTINATION_LONGITIUDE , destination.longitude);
+        customerInfo.put(DATABASE_COST , cost);
+        customerInfo.put(DATABASE_REQUEST , TRUE);
+        customerInfo.put(DATABASE_PHONE_NUMBER , phoneNumber);
         return customerInfo;
     }
 
-    private void denyRequest(DatabaseReference reference, String name) {
-        Log.d("Request to id = " + Objects.requireNonNull(driversNameAndID.get(name)), DELETE_REQUEST);
-        deleteDriverTripRequest(reference, name);
-        deleteUserTripRequest(reference, uid);
+    private void denyRequest(DatabaseReference reference , String name) {
+        deleteDriverTripRequest(reference , name);
+        deleteUserTripRequest(reference , uid);
         --rideNumber;
     }
 
-    private void deleteUserTripRequest(DatabaseReference reference, String uid) {
+    private void deleteUserTripRequest(DatabaseReference reference , String uid) {
         reference.child(Objects.requireNonNull(uid)).child(DATABASE_TRIP).removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) setupDenyLayout(DELETED_REQUEST);
         });
     }
 
-    private void deleteDriverTripRequest(DatabaseReference reference, String name) {
+    private void deleteDriverTripRequest(DatabaseReference reference , String name) {
         reference.child(Objects.requireNonNull(driversNameAndID.get(name))).child(DATABASE_REQUESTS).setValue(FALSE).addOnCompleteListener(task -> {
             if (task.isSuccessful()) setupDenyLayout(DELETED_REQUEST);
         });
         reference.child(Objects.requireNonNull(driversNameAndID.get(name))).child(DATABASE_RESPONSE).setValue(" ");
     }
 
-    private String getNearestDriverName() {
-        return driversIDAndNames.get(driversInfo.get(Collections.min(driversInfo.keySet())));
-    }
+    private String getNearestDriverName() { return driversIDAndNames.get(driversInfo.get(Collections.min(driversInfo.keySet()))); }
 
-    private String getNearestDriverID() {
-        return driversInfo.get(Collections.min(driversInfo.keySet()));
-    }
+    private String getNearestDriverID() { return driversInfo.get(Collections.min(driversInfo.keySet())); }
 
     private String getDriverIDFromMarker(Marker marker) {
         try {
@@ -610,30 +574,23 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                 if (markers.containsKey(marker)) {
                     driverID = markers.get(marker);
                     driverName = marker.getTitle();
-                    Log.d("getDriverID", driverID);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, WENT_WRONG, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context , WENT_WRONG , Toast.LENGTH_SHORT).show();
         }
 
         return driverName;
     }
 
-    private void writeUserData(DatabaseReference reference, LatLng latLng) {
+    private void writeUserData(DatabaseReference reference , LatLng latLng) {
         if (isDriver) {
             user = new Driver(String.valueOf(latLng.latitude) , String.valueOf(latLng.longitude));
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) Log.d("Primary Map Tag" , "Location Done Successfully " + latLng.toString());
-                    });
+            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
         } else {
             user = new Customer(String.valueOf(latLng.latitude) , String.valueOf(latLng.longitude));
-            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) Log.d("Primary Map Tag" , "Location Done Successfully " + latLng.toString());
-                    });
+            reference.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child(Constants.DATABASE_USER_CURRENT_LOCATION).updateChildren(user.toUserLocationMap());
         }
     }
 
@@ -648,11 +605,11 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void moveCamera(LatLng lng) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lng, Constants.DEFAULT_ZOOM));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lng , Constants.DEFAULT_ZOOM));
     }
 
-    private void setupMarkers(GoogleMap googleMap, LatLng latLng, DatabaseReference reference) {
-        addPrimaryMarker(googleMap, markerPoints, latLng, reference);
+    private void setupMarkers(GoogleMap googleMap , LatLng latLng , DatabaseReference reference) {
+        addPrimaryMarker(googleMap , markerPoints , latLng , reference);
         layoutComponents();
         setLayout();
         //Markers Set:
@@ -664,7 +621,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
             //Setting up LatLng s :
             destination = markerPoints.get(0);
-            currentLatLng = new LatLng(latitude, longitude);
+            currentLatLng = new LatLng(latitude , longitude);
             markerPoints.add(currentLatLng);
 
             MarkerOptions endLocation = new MarkerOptions().position(destination)
@@ -676,10 +633,10 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             map.addMarker(startLocation);
             map.addMarker(endLocation);
 
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, Constants.DEFAULT_ZOOM - 0.5f));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination , Constants.DEFAULT_ZOOM - 0.5f));
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), Constants.JUST_A_MIN, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity() , Constants.JUST_A_MIN , Toast.LENGTH_SHORT).show();
             resetFragment(reference);
         }
     }
@@ -692,7 +649,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         txtCost.setVisibility(View.VISIBLE);
     }
 
-    private void addPrimaryMarker(GoogleMap googleMap, @NotNull ArrayList<LatLng> list, LatLng lng, DatabaseReference reference) {
+    private void addPrimaryMarker(GoogleMap googleMap , @NotNull ArrayList<LatLng> list , LatLng lng , DatabaseReference reference) {
         //Checking if there is no marker on the map
         if (list.size() > 1) {
             list.clear();
@@ -705,28 +662,27 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
         list.add(lng);
 
-        addMarkerToMap(googleMap, lng, BitmapDescriptorFactory.defaultMarker(HUE_GREEN), DESTINATION);
+        addMarkerToMap(googleMap , lng , BitmapDescriptorFactory.defaultMarker(HUE_GREEN) , DESTINATION);
         btnRoute.setVisibility(View.VISIBLE);
     }
 
-    private Marker addMarkerToMap(@NotNull GoogleMap googleMap, LatLng latLng, BitmapDescriptor bitmapDescriptor, String title) {
+    private Marker addMarkerToMap(@NotNull GoogleMap googleMap , LatLng latLng , BitmapDescriptor bitmapDescriptor , String title) {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng).title(title).icon(bitmapDescriptor);
-        Log.d("Marker NearestDriver", "Marker Added : " + title);
         return googleMap.addMarker(markerOptions);
     }
 
-    private void getDestinationInfo(@NotNull GoogleMap googleMap, DatabaseReference reference, LatLng destination, LatLng origin) {
+    private void getDestinationInfo(@NotNull GoogleMap googleMap , DatabaseReference reference , LatLng destination , LatLng origin) {
         try {
             GoogleDirection.withServerKey(API_KEY)
                     .from(origin)
                     .to(destination)
                     .transportMode(TransportMode.DRIVING)
                     .execute(new DirectionCallback() {
-                        @SuppressLint({"DefaultLocale", "SetTextI18n"})
+                        @SuppressLint({"DefaultLocale" , "SetTextI18n"})
                         @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
-                        public void onDirectionSuccess(Direction direction, String rawBody) {
+                        public void onDirectionSuccess(Direction direction , String rawBody) {
                             String status = direction.getStatus();
                             switch (status) {
                                 case RequestResult.OK:
@@ -745,8 +701,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                     txtDropOffLocationName.setText(destinationLocationName);
                                     //Drawing route
                                     ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
-                                    PolylineOptions polylineOptions = DirectionConverter.createPolyline(Objects.requireNonNull(getActivity()),
-                                            directionPositionList, 5, Color.RED);
+                                    PolylineOptions polylineOptions = DirectionConverter.createPolyline(Objects.requireNonNull(getActivity()) ,
+                                            directionPositionList , 5 , Color.RED);
                                     googleMap.addPolyline(polylineOptions);
                                     //Bounds
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -756,23 +712,21 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                     int width = getResources().getDisplayMetrics().widthPixels;
                                     int height = getResources().getDisplayMetrics().heightPixels;
                                     int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
-                                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds , width , height , padding);
                                     map.animateCamera(cu);
                                     //Cost
-                                    cost = getCost(duration, distance);
-                                    if (cost != 0.0) {
-                                        txtCost.setText(cost + " JD");
-                                    } else {
-                                        getCost(duration, distance);
+                                    cost = getCost(duration , distance);
+                                    if (cost != 0.0) txtCost.setText(cost + " JD");
+                                    else {
+                                        getCost(duration , distance);
                                         txtCost.setText(cost + " JD");
                                     }
                                     break;
                                 case RequestResult.NOT_FOUND:
-                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), NO_ROUTE_EXIST, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext() , NO_ROUTE_EXIST , Toast.LENGTH_SHORT).show();
                                     break;
                                 default:
-                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), WENT_WRONG, Toast.LENGTH_SHORT).show();
-                                    Log.d("Status", status);
+                                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext() , WENT_WRONG , Toast.LENGTH_SHORT).show();
                                     break;
                             }
                         }
@@ -782,34 +736,29 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                             t.printStackTrace();
                         }
                     });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
         setDriverName(reference);
     }
 
-    private void writeTripData(@NotNull DatabaseReference reference, String driverName, String id) {
+    private void writeTripData(@NotNull DatabaseReference reference , String driverName , String id) {
         //Data
         float[] result = new float[1];
-        Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, destination.latitude, destination.longitude, result);
+        Location.distanceBetween(currentLatLng.latitude , currentLatLng.longitude , destination.latitude , destination.longitude , result);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = simpleDateFormat.format(new Date());
-        rideNumber = getLastRideNumber(reference, id);
+        rideNumber = getLastRideNumber(reference , id);
         //Setting up the Objects
-        TripRoute tripRoute = new TripRoute(currentLocationName, destinationLocationName, distance, duration, STATUS_DRIVING_STARTING);
-        Ride ride = new Ride(Constants.description(currentLocationName, destinationLocationName), cost + " JD", date, tripRoute);
-        Rating rating = new Rating(" ", String.valueOf(rideNumber));
-        Trip trip = new Trip(driversNameAndID.get(txtName.getText().toString()), user, ride, driverName, rating);
+        TripRoute tripRoute = new TripRoute(currentLocationName , destinationLocationName , distance , duration , STATUS_DRIVING_STARTING);
+        Ride ride = new Ride(Constants.description(currentLocationName , destinationLocationName) , cost + " JD" , date , tripRoute);
+        Rating rating = new Rating(" " , String.valueOf(rideNumber));
+        Trip trip = new Trip(driversNameAndID.get(txtName.getText().toString()) , user , ride , driverName , rating);
         //writing to the database
         reference.child(id).child(DATABASE_TRIP).child(String.valueOf(rideNumber)).updateChildren(trip.toFullTripMap()).addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                rideNumber++;
-                Log.d("Primary Map Tag" , "Ride Number Done Successfully " + rideNumber);
-            }
+            if (task.isSuccessful()) rideNumber++;
         });
     }
 
-    private int getLastRideNumber(DatabaseReference reference, String id) {
+    private int getLastRideNumber(DatabaseReference reference , String id) {
         Query lastQuery = reference.child(id).child(DATABASE_TRIP).orderByKey().limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -820,23 +769,18 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         rideNumber = Integer.valueOf(Objects.requireNonNull(snapshot.getKey()));
                     }
-                } else {
-                    rideNumber = 0;
-                }
-                System.out.println(rideNumber);
+                } else rideNumber = 0;
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                databaseError.toException().printStackTrace();
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { databaseError.toException().printStackTrace(); }
         });
 
         return rideNumber;
     }
 
     private void setupDenyLayout(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context , s , Toast.LENGTH_SHORT).show();
         cardViewConfirmTrip.setVisibility(GONE);
         btnRoute.setVisibility(GONE);
         map.clear();
@@ -878,25 +822,25 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                                 //Setting up the data
                                 String name = Objects.requireNonNull(userSnapshot.child(DATABASE_NAME).getValue()).toString();
                                 //String phoneNumber = Objects.requireNonNull(userSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString();
-                                LatLng lng = new LatLng(latlng[0], latlng[1]);
-                                Marker marker = addMarkerToMap(map, lng, bitmapDescriptorFromVector(Objects.requireNonNull(getActivity()).getApplicationContext()), name);
-                                Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, lng.latitude, lng.longitude, distanceBetweenLocations);
+                                LatLng lng = new LatLng(latlng[0] , latlng[1]);
+                                Marker marker = addMarkerToMap(map , lng , bitmapDescriptorFromVector(Objects.requireNonNull(getActivity()).getApplicationContext()) , name);
+                                Location.distanceBetween(currentLatLng.latitude , currentLatLng.longitude , lng.latitude , lng.longitude , distanceBetweenLocations);
                                 //Putting Data into Data Structures
-                                driversLocation.put(lng, distanceBetweenLocations[0]);
-                                driversInfo.put(distanceBetweenLocations[0], driverID);
-                                driversData.put(driversInfo, driversLocation);
-                                markers.put(marker, driverID);
-                                driversIDAndNames.put(driverID, name);
-                                driversNameAndID.put(name, driverID);
+                                driversLocation.put(lng , distanceBetweenLocations[0]);
+                                driversInfo.put(distanceBetweenLocations[0] , driverID);
+                                driversData.put(driversInfo , driversLocation);
+                                markers.put(marker , driverID);
+                                driversIDAndNames.put(driverID , name);
+                                driversNameAndID.put(name , driverID);
                             }
                         } else {
-                            Toast.makeText(context, WENT_WRONG, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context , WENT_WRONG , Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    if(e instanceof NetworkErrorException){
-                        Toast.makeText(context, "Network isn't working well", Toast.LENGTH_SHORT).show();
+                    if (e instanceof NetworkErrorException) {
+                        Toast.makeText(context , "Network isn't working well" , Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -904,38 +848,31 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 databaseError.toException().printStackTrace();
-                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), WENT_WRONG, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext() , WENT_WRONG , Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @NotNull
     private BitmapDescriptor bitmapDescriptorFromVector(Context context) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_directions_car_black_24dp);
-        vectorDrawable.setBounds(0, 0, Objects.requireNonNull(vectorDrawable).getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Drawable vectorDrawable = ContextCompat.getDrawable(context , R.drawable.ic_directions_car_black_24dp);
+        vectorDrawable.setBounds(0 , 0 , Objects.requireNonNull(vectorDrawable).getIntrinsicWidth() , vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth() , vectorDrawable.getIntrinsicHeight() , Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    private Float getCost(@NotNull String d0, @NotNull String d1) {
+    private Float getCost(@NotNull String d0 , @NotNull String d1) {
         try {
-            float dur = Float.valueOf(d0.substring(0, d0.indexOf(" ")));
-            float dis = Float.valueOf(d1.substring(0, d1.indexOf(" ")));
+            float dur = Float.valueOf(d0.substring(0 , d0.indexOf(" ")));
+            float dis = Float.valueOf(d1.substring(0 , d1.indexOf(" ")));
 
-            System.out.println("Duration = " + dur + "\n" + "Distance = " + dis);
+            if (dis > 0 && dis <= 5) cost = 0.5f;
+            else if (dis >= 6 && dis <= 11) cost = 1f;
+            else cost = 2f;
 
-            if (dis > 0 && dis <= 5) {
-                cost = 0.5f;
-            } else if (dis >= 6 && dis <= 11) {
-                cost = 1f;
-            } else {
-                cost = 2f;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
         return cost;
     }
 
@@ -953,7 +890,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         btnDenyRide = view.findViewById(R.id.btnDenyTripFragPrimary);
     }
 
-    private void setupTripLayout(GoogleMap googleMap, DatabaseReference reference) {
+    private void setupTripLayout(GoogleMap googleMap , DatabaseReference reference) {
         btnRoute.setVisibility(GONE);
         btnDenyRide.setVisibility(GONE);
         cardViewSearch.setVisibility(View.VISIBLE);
@@ -962,8 +899,6 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         setDriverName(reference);
         googleMap.setOnMarkerClickListener(marker -> {
             txtName.setText(getDriverIDFromMarker(marker));
-            System.out.println("Driver ID " + driverID);
-            System.out.println("Drive Name " + driverName);
             return false;
         });
     }
@@ -973,7 +908,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
         else getDrivers(reference);
     }
 
-    private void getUserName(DatabaseReference reference, String userID, String driverID) {
+    private void getUserName(DatabaseReference reference , String userID , String driverID) {
         reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -981,24 +916,21 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
                     userName = Objects.requireNonNull(dataSnapshot.child(DATABASE_NAME).getValue()).toString();
                     phoneNumber = Objects.requireNonNull(dataSnapshot.child(DATABASE_PHONE_NUMBER).getValue()).toString();
                     customerInfo = getCustomerInfo();
-                    writeCustomerInfo(reference, driverID);
+                    writeCustomerInfo(reference , driverID);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
     }
 
-    private void writeCustomerInfo(DatabaseReference reference, String id) {
+    private void writeCustomerInfo(DatabaseReference reference , String id) {
         reference.child(Objects.requireNonNull(id)).child(DATABASE_REQUESTS).child(String.valueOf(rideNumber)).updateChildren(customerInfo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 //Confirming that the request was
-                Snackbar snackbar = Snackbar.make(view, REQUEST_SENT + txtName.getText().toString(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(view , REQUEST_SENT + txtName.getText().toString() , Snackbar.LENGTH_LONG);
                 snackbar.show();
-                Log.d("Primary Map Tag" , "Customer Info Done Successfully " +  txtName.getText().toString());
             }
         });
     }
