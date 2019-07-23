@@ -1,2 +1,0 @@
-# PSUTPool
-PSUT Pooling Project
