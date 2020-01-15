@@ -122,7 +122,7 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
 
     private void initObj() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(10);
         } catch (InterruptedException e) { e.printStackTrace(); }
         markerPoints = new ArrayList<>();
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
@@ -134,9 +134,8 @@ public class PrimaryMapTabFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void startMapSetUp() {
-        if (getLocationPermission()) {
-            intitMap();
-        } else {
+        if (getLocationPermission()) intitMap();
+        else {
             getLocationPermission();
             Toast.makeText(context , "Please Give the app the Permissions" , Toast.LENGTH_SHORT).show();
         }
